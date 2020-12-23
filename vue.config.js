@@ -1,0 +1,22 @@
+const path = require('path');
+
+module.exports = {
+    // chainWebpack: config => {
+    //     config.resolve.alias
+    //     .set('@modal', resolvePath('src/views'))
+    // },
+    devServer: {
+        proxy: {
+            '/api': {
+                target: process.env.VUE_APP_devServerProxy,
+                pathRewrite: { '^/api': '' },
+                changeOrigin: true
+            }
+        }
+    },
+    lintOnSave: false
+}
+
+function resolvePath(url) {
+    return path.resolve(__dirname, url);
+}
