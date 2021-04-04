@@ -11,56 +11,37 @@ class Api {
             put: false,
             delete: false
         }
-        this.reqData = null;
-        this.res = null;
+        this.reqData = null; // 每次请求的数据
+        this.res = null; // 每次响应的数据
     }
 
+    // 发起get请求
     get(...args) {
-        let appendUrl = null;
-        let query = null;
+        let { appendUrl, data } = this._handleRequestParams(args);
 
-        if(args.length === 1) {
-            query = args[0];
-        }
-        else if(args.length === 2) {
-            appendUrl = args[0];
-            query = args[1];
-        }
-
-        return this.request(appendUrl, 'get', query)
+        return this.request(appendUrl, 'get', data)
     }
 
     post(...args) {
-        let appendUrl = null;
-        let data = null;
-
-        if(args.length === 1) {
-            data = args[0];
-        }
-        else if(args.length === 2) {
-            appendUrl = args[0];
-            data = args[1];
-        }
+        let { appendUrl, data } = this._handleRequestParams(args);
 
         return this.request(appendUrl, 'post', data)
     }
 
     put(...args) {
-        let appendUrl = null;
-        let data = null;
-
-        if(args.length === 1) {
-            data = args[0];
-        }
-        else if(args.length === 2) {
-            appendUrl = args[0];
-            data = args[1];
-        }
+        let { appendUrl, data } = this._handleRequestParams(args);
 
         return this.request(appendUrl, 'put', data)
     }
 
     delete(...args) {
+        let { appendUrl, data } = this._handleRequestParams(args);
+
+        return this.request(appendUrl, 'delete', data)
+    }
+
+    // 处理请求参数。一个参数则为data；两个参数第一个为appendUrl，第二个为data
+    _handleRequestParams(args) {
         let appendUrl = null;
         let data = null;
 
@@ -72,14 +53,13 @@ class Api {
             data = args[1];
         }
 
-        return this.request(appendUrl, 'delete', data)
+        return {
+            appendUrl,
+            data
+        }
     }
 
     request(append = null, method = 'get', data = null) {
-        if(append) {
-            this.appendUrl(append);
-        }
-
         this.reqData = data;
 
         if(method === 'get') {
@@ -90,33 +70,32 @@ class Api {
         }
 
         let axios = axiosInstance;
+
         if(this.public) {
-            axios = axios.public;
+            axios = axios.public; // 如果是公共接口,则使用public实例
         }
+
+        let url = append ? this.url + append : this.url;
 
         return new Promise((resolve, reject) => {
             this.loading[method] = true;
             this.res = null;
 
-            axios[method](this.url, data)
+            axios[method](url, data)
             .then(res => {
                 this.res = res.data;
-                resolve(res.data);
                 this.loading[method] = false;
+                resolve(res.data);
             })
             .catch(error => {
-                reject(error.response);
                 this.loading[method] = false;
+                reject(error.response);
             })
         })
     }
 
     setUrl(url = '') {
         this.url = url;
-    }
-
-    appendUrl(str = '') {
-        this.url += str;
     }
 }
 

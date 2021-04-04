@@ -4,11 +4,11 @@ import router from '../router'
 import VueWebStorage from 'vue-web-storage'
 import api from '@/lib/api/plugin'
 // import iModal from '@/lib/iModal/plugin'
-import regDirective from './directive'
+// import regDirective from './directive'
 // import regComponents from './components'
 import axiosInstance from './axios'
-import Mock from 'mockjs'
-import mockConfig from './mock'
+// import Mock from 'mockjs'
+// import mockConfig from './mock'
 // import anime from 'animejs/lib/anime.es.js'
 import util from '../lib/util'
 
@@ -24,7 +24,7 @@ function configVue() {
     app.use(api);
     // app.use(iModal);
 
-    regDirective(app);
+    // regDirective(app);
     // regComponents(app);
 }
 
@@ -66,7 +66,7 @@ function start(appInstance) {
 
     // 配置第三方库
     configAxios();
-    configMock();
+    // configMock();
     // configAnime();
     configUtil();
 }

@@ -9,8 +9,11 @@ export default {
         isLogin: (state, getters, rootState, rootGetters) => {
             return state.isLogin
         },
+        user: (state, getters, rootState, rootGetters) => {
+            return state.user || {}
+        },
         token: (state, getters, rootState, rootGetters) => {
-            return state.token
+            return state.token || ''
         }
     },
     mutations: {

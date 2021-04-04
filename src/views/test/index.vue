@@ -1,5 +1,5 @@
 <template>
-    <div>123</div>
+    <div>Test</div>
 </template>
 
 <script lang="ts">

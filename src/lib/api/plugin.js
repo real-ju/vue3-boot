@@ -2,18 +2,15 @@ import apis from './reg'
 
 /**
  * Vue调用插件
- * @param {*} app
+ * @param {*} Vue 
  * @param {Object} options
  */
-const install = function(app, options) {
-    app.mixin({
+const install = function(Vue, options) {
+    Vue.mixin({
         data() {
             return {
-                Api: {}
+                Api: apis
             }
-        },
-        created: function() {
-            this.Api = apis;
         }
     })
 }

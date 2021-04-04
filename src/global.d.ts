@@ -1,4 +1,4 @@
 declare module '@/*' {
-    const value: any;
-    export default value
+    const lib: any;
+    export default lib
 }

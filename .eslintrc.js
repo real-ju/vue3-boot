@@ -5,8 +5,10 @@ module.exports = {
     },
     extends: [
         'plugin:vue/vue3-essential',
-        '@vue/standard',
-        '@vue/typescript/recommended'
+        'eslint:recommended',
+        '@vue/typescript/recommended',
+        '@vue/prettier',
+        '@vue/prettier/@typescript-eslint',
     ],
     parserOptions: {
         ecmaVersion: 2020
@@ -14,22 +16,5 @@ module.exports = {
     rules: {
         "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
         "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
-        "no-multiple-empty-lines": ["off"],
-        "space-before-function-paren": ["error", "never"],
-        "indent": ["error", 4, {
-            "MemberExpression": "off"
-        }],
-        "prefer-const": ["off"],
-        "keyword-spacing": ["error", {
-            "overrides": {
-                "if": { "after": false },
-                "for": { "after": false },
-                "while": { "after": false }
-            }
-        }],
-        "semi": ["off"],
-        "brace-style": ["error", "stroustrup"],
-        "no-trailing-spaces": ["off"],
-        "eol-last": ["off"],
     }
 }

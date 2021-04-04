@@ -33,6 +33,34 @@ const obj = {
         }
 
         return rst
+    },
+
+    // 对象深拷贝
+    clone(value) {
+        if(value === null || typeof value !== 'object') {
+            return value
+        }
+
+        let obj = {};
+
+        // 遍历可枚举属性
+        for(const key in value) {
+            const item = value[key];
+            if(typeof item === 'function') {
+                // 如果是函数，则通过bind拷贝
+                obj[key] = item.bind(obj);
+            }
+            else if(Array.isArray(item)) {
+                obj[key] = item.map(i => {
+                    return this.clone(i);
+                })
+            }
+            else {
+                obj[key] = this.clone(item);
+            }
+        }
+
+        return obj
     }
 }
 
@@ -59,8 +87,48 @@ const math = {
     }
 }
 
+/**
+ * 将一个函数防抖化
+ * @param {Function} fn 原函数
+ * @param {Number} wait 间隔时间
+ * @return {Function} 防抖函数(取消平A，重置前摇。最后一次操作有意义)
+ */
+function debounce(fn, wait) {
+    let timer = null;
+    return function(...args) {
+        if(timer) {
+            clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+            fn.apply(this, args);
+        }, wait)
+    }
+}
+
+/**
+ * 将一个函数节流化
+ * @param {Function} fn 原函数
+ * @param {Number} wait 间隔时间
+ * @return {Function} 节流函数(技能CD。每次操作都有意义)
+ */
+function throttle(fn, wait) {
+    let timer = null;
+    return function(...args) {
+        if(timer) {
+            return
+        }
+        timer = setTimeout(() => {
+            fn.apply(this, args);
+            timer = null;
+        }, wait)
+    }
+}
+
+
 export default {
     arr,
     obj,
-    math
+    math,
+    debounce,
+    throttle
 }

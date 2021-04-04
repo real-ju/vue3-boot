@@ -1,4 +1,6 @@
+/* eslint-disable */
 import { Store } from 'vuex';
+import { Router } from 'vue-router';
 
 declare module '*.vue' {
     import type { DefineComponent } from 'vue'
@@ -6,9 +8,17 @@ declare module '*.vue' {
     export default component
 }
 
-declare module '@vue/runtime-core' {
-    interface ComponentCustomProperties {
+declare module 'vue/types/vue' {
+    interface Vue {
         $store: Store;
+        $router: Router;
         Api: any;
     }
 }
+// declare module '@vue/runtime-core' {
+//     interface ComponentCustomProperties {
+//         $store: Store;
+//         $router: Router;
+//         Api: any;
+//     }
+// }
