@@ -14,7 +14,7 @@ module.exports = {
             }
         }
     },
-    lintOnSave: false
+    lintOnSave: true
 }
 
 function resolvePath(url) {

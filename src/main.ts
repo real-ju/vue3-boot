@@ -1,15 +1,14 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from "vue";
+import App from "./App.vue";
 
 // 全局CSS
-import '@/style/main.css'
+import "@/style/main.css";
 
 // 启动配置文件
-import bootstrap from '@/config/bootstrap'
-
+import bootstrap from "@/config/bootstrap";
 
 const app = createApp(App);
 
 bootstrap.start(app);
 
-app.mount('#app');
+app.mount("#app");
