@@ -16,9 +16,9 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     base: env.VITE_PUBLIC_PATH,
     resolve: {
       alias: [
-        // @/xxxx => /src/xxxx
+        // /@/xxxx => /src/xxxx
         {
-          find: /@\//,
+          find: /\/@\//,
           replacement: pathResolve('src') + '/'
         }
       ]
