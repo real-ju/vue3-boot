@@ -3,7 +3,7 @@ import { loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 
-function pathResolve(dir: string) {
+function pathResolve(dir: string): string {
   return resolve(process.cwd(), dir);
 }
 
@@ -16,7 +16,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     base: env.VITE_PUBLIC_PATH,
     resolve: {
       alias: [
-        // /@/xxxx => /src/xxxx
+        // @/xxxx => /src/xxxx
         {
           find: /@\//,
           replacement: pathResolve('src') + '/'
