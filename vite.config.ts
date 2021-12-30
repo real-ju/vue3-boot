@@ -1,9 +1,9 @@
 import type { UserConfig, ConfigEnv } from 'vite';
 import { loadEnv } from 'vite';
-import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
+import { createVitePlugins } from './build/vite/plugin';
 
-function pathResolve(dir: string): string {
+function pathResolve(dir: string) {
   return resolve(process.cwd(), dir);
 }
 
@@ -23,7 +23,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         }
       ]
     },
-    plugins: [vue()],
+    plugins: createVitePlugins(env),
     server: {
       // host: '0.0.0.0',
       proxy: {
