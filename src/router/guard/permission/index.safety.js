@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import routes from './reg';
+import routes from '../../reg';
 import store from '../store';
 import Api from '@/lib/api/reg';
 import { asyncViewImport } from '@/config/util';
@@ -18,7 +18,7 @@ const router = new Router({
     }
 
     return position;
-  },
+  }
 });
 
 let isFetchUserRoutes = false;
@@ -46,18 +46,19 @@ router.beforeEach((to, from, next) => {
               name: item.name,
               meta: {
                 title: item.title,
-                public: false,
+                public: false
               },
               component: asyncViewImport(
-                `admin/${item.common ? 'common' : userPlatform.symbol}/${item.name
+                `admin/${item.common ? 'common' : userPlatform.symbol}/${
+                  item.name
                 }/index.vue`
-              ),
+              )
             });
           });
 
           routeList.push({
             path: '/',
-            redirect: '/admin',
+            redirect: '/admin'
           });
 
           routeList.push({
@@ -65,15 +66,15 @@ router.beforeEach((to, from, next) => {
             name: 'admin',
             meta: {
               title: '首页',
-              public: false,
+              public: false
             },
             component: asyncViewImport('admin/index.vue'),
-            children: adminRoutes,
+            children: adminRoutes
           });
 
           routeList.push({
             path: '*',
-            redirect: '/404',
+            redirect: '/404'
           });
 
           router.addRoutes(routeList);
@@ -100,8 +101,8 @@ router.beforeEach((to, from, next) => {
         next({
           path: '/login',
           query: {
-            back_url: encodeURIComponent(to.fullPath),
-          },
+            back_url: encodeURIComponent(to.fullPath)
+          }
         });
       } else {
         document.title = `${to.meta.title} - ${APP_NAME}`;
