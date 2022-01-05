@@ -1,15 +1,13 @@
 import type { Router } from 'vue-router';
 
-import { setDocTitle } from '/@/utils/dom';
-
-const APP_TITLE = import.meta.env.VITE_APP_TITLE;
+import { setPageTitle } from '/@/router/helper/routeHelper';
 
 export function createLocalPermissionGuard(router: Router) {
   router.beforeEach((to, from, next) => {
     // 检测是否匹配某路由
     let isMatched = to.matched.length !== 0;
     if (!isMatched) {
-      let error = new Error(`'${to.path}'不是有效路径`);
+      let error = new Error(`"${to.path}"不是有效路径`);
       error.name = 'PathMatchError';
       next(error);
     } else {
@@ -20,7 +18,7 @@ export function createLocalPermissionGuard(router: Router) {
       if (requireAuth) {
         // 检测是否登录
         if (isLogin) {
-          setDocTitle(`${to.meta.title} - ${APP_TITLE}`);
+          setPageTitle(to.meta.title);
           next();
         } else {
           next({
@@ -35,7 +33,7 @@ export function createLocalPermissionGuard(router: Router) {
         if (to.path === '/login' && isLogin) {
           next({ path: '/' });
         } else {
-          setDocTitle(`${to.meta.title} - ${APP_TITLE}`);
+          setPageTitle(to.meta.title);
           next();
         }
       }
@@ -44,9 +42,10 @@ export function createLocalPermissionGuard(router: Router) {
 
   router.onError((error) => {
     if (error.name === 'PathMatchError') {
-      router.push('/');
+      // 如果不存在/404 会导致死循环 浏览器卡死
+      router.push('/404');
     } else if (error.name === 'PathAuthError') {
-      router.push('/');
+      router.push('/403');
     }
   });
 }

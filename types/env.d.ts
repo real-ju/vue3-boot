@@ -8,4 +8,10 @@ interface ImportMetaEnv {
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
+  globEager(pattern: string): Record<
+    string,
+    {
+      [key: string]: any;
+    }
+  >;
 }
