@@ -31,7 +31,7 @@ export function createLocalPermissionGuard(router: Router) {
       } else {
         // 登录后再次访问登录页
         if (to.path === '/login' && isLogin) {
-          next({ path: '/' });
+          next('/');
         } else {
           setPageTitle(to.meta.title);
           next();
