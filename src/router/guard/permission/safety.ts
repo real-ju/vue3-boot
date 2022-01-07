@@ -7,13 +7,13 @@ import {
   getComponentFilePath
 } from '/@/router/helper/routeHelper';
 import projectSetting from '/@/settings/projectSetting';
+import { store } from '/@/store';
 
 export function createSafetyPermissionGuard(router: Router) {
   let isFetchUserRoutes = false;
 
   router.beforeEach((to, from, next) => {
-    // let isLogin = store.getters['auth/isLogin'];
-    let isLogin = false;
+    let isLogin = store.getters['auth/isLogin'];
     if (isLogin) {
       if (!isFetchUserRoutes) {
         // 此处为获取用户路由表的接口
@@ -24,11 +24,11 @@ export function createSafetyPermissionGuard(router: Router) {
             let adminRoutes: RouteRecordRaw[] = [];
 
             let { multiplePlatformMode } = projectSetting;
-            // let userPlatform = store.getters['auth/user'].platform;
-            let userPlatform: any = {};
+            let userPlatform = store.getters['auth/user'].platform;
             if (multiplePlatformMode && !userPlatform) {
+              store.commit('auth/logout');
+              router.push('/login');
               throw '登陆状态错误，请重新登陆';
-              // TODO 重新登录
             }
 
             // 添加所有admin route

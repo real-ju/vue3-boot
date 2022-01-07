@@ -1,6 +1,7 @@
 import type { Router } from 'vue-router';
 
 import { setPageTitle } from '/@/router/helper/routeHelper';
+import { store } from '/@/store';
 
 export function createLocalPermissionGuard(router: Router) {
   router.beforeEach((to, from, next) => {
@@ -11,8 +12,7 @@ export function createLocalPermissionGuard(router: Router) {
       error.name = 'PathMatchError';
       next(error);
     } else {
-      // let isLogin = store.getters['auth/isLogin'];
-      let isLogin = false;
+      let isLogin = store.getters['auth/isLogin'];
       // 检测路由访问权限
       let requireAuth = to.matched.some((record) => !record.meta.public);
       if (requireAuth) {

@@ -1,7 +1,7 @@
-import type { App } from 'vue';
+import type { App, InjectionKey } from 'vue';
 import type { RootState } from '/#/store';
 
-import { createStore, ModuleTree } from 'vuex';
+import { createStore, ModuleTree, Store, useStore as baseUseStore } from 'vuex';
 import { resolveFileNameFromPath } from '/@/utils';
 import createPersistedState from 'vuex-persistedstate';
 
@@ -17,27 +17,32 @@ Object.keys(modules).forEach((key) => {
 });
 
 // use plugins
-
 //持久化
 const persistedState = createPersistedState({
   paths: ['auth']
 });
 
-const store = createStore({
-  state: (): RootState => ({}),
+export const store = createStore<RootState>({
+  state: {},
   getters: {
-    // name(state, getters): any {}
+    // name(state, getters) {}
   },
   mutations: {
-    // name(state, payload): void {}
+    // name(state, payload) {}
   },
   actions: {
-    // name({ commit }, payload): void {}
+    // name({ commit }, payload) {}
   },
   modules: moduleTree,
   plugins: [persistedState]
 });
 
-export function setupStore(app: App<Element>) {
+export function setupStore(app: App) {
   app.use(store);
+}
+
+export const key: InjectionKey<Store<RootState>> = Symbol();
+
+export function useStore() {
+  return baseUseStore(key);
 }

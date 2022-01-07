@@ -24,7 +24,7 @@ const router = createRouter({
 });
 
 // config router
-export function setupRouter(app: App<Element>) {
+export function setupRouter(app: App) {
   setupRouterGuard(router);
   app.use(router);
 }
