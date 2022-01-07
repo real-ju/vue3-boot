@@ -1,6 +1,6 @@
 /**
- * 从globEager导入的模块路径解析文件名
- * @param path 模块路径
+ * 从路径或URL中解析文件名
+ * @param path 路径或URL
  */
 export function resolveFileNameFromPath(path: string): string {
   let arr1 = path.split('/');

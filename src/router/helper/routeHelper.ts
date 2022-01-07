@@ -1,5 +1,5 @@
 import projectSetting from '/@/settings/projectSetting';
-import { setDocTitle } from '/@/utils/dom';
+import { setDocTitle } from '../../utils/domUtils';
 
 /**
  * 异步导入页面级组件

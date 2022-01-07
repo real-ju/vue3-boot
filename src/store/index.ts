@@ -2,7 +2,7 @@ import type { App } from 'vue';
 import type { RootState } from '/#/store';
 
 import { createStore, ModuleTree } from 'vuex';
-import { resolveFileNameFromPath } from './helper';
+import { resolveFileNameFromPath } from '/@/utils';
 import createPersistedState from 'vuex-persistedstate';
 
 // import modules
