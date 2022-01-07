@@ -3,7 +3,7 @@ import type { RootState } from '/#/store';
 
 import { createStore, ModuleTree } from 'vuex';
 import { resolveFileNameFromPath } from './helper';
-// import createPersistedState from 'vuex-persistedstate';
+import createPersistedState from 'vuex-persistedstate';
 
 // import modules
 const modules = import.meta.globEager('./modules/**/*.ts');
@@ -17,9 +17,11 @@ Object.keys(modules).forEach((key) => {
 });
 
 // use plugins
-// const PersistedState = createPersistedState({
-//   paths: ['auth']
-// });
+
+//持久化
+const persistedState = createPersistedState({
+  paths: ['auth']
+});
 
 const store = createStore({
   state: (): RootState => ({}),
@@ -32,8 +34,8 @@ const store = createStore({
   actions: {
     // name({ commit }, payload): void {}
   },
-  modules: moduleTree
-  // plugins: [PersistedState]
+  modules: moduleTree,
+  plugins: [persistedState]
 });
 
 export function setupStore(app: App<Element>) {
