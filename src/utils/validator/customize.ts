@@ -1,5 +1,4 @@
 // 自定义验证器
-
 export default {
   arrNotEmpty
 };

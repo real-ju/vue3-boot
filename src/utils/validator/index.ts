@@ -2,7 +2,12 @@
 import preset from './rules';
 import customize from './customize';
 
-import type { ErrorField } from './types';
+import type {
+  ErrorField,
+  Rules,
+  RuleDescription,
+  CustomValidator
+} from './types';
 
 export default {
   validate,
@@ -11,7 +16,7 @@ export default {
   customize
 };
 
-function validate(obj: Recordable, rules: Recordable): ErrorField[] | true {
+function validate(obj: Recordable, rules: Rules): ErrorField[] | true {
   if (typeof obj != 'object' || typeof rules != 'object') {
     throw `validate()参数错误`;
   }
@@ -44,9 +49,9 @@ function validate(obj: Recordable, rules: Recordable): ErrorField[] | true {
   }
 }
 
-function single(value, rules) {
-  let rst = true,
-    errorMsg = '验证未通过';
+function single(value: any, rules: RuleDescription[]): string | true {
+  let rst: boolean | string = true,
+    errorMsg: string = '验证未通过';
 
   if (!(rules instanceof Array)) {
     throw `single()规则格式错误`;
@@ -66,7 +71,7 @@ function single(value, rules) {
       }
     } else if (item.rule) {
       let matchRst = match(String(value), item.rule);
-      if (typeof matchRst == 'string' || matchRst === false) {
+      if (typeof matchRst == 'string') {
         if (item.message) {
           errorMsg = item.message;
         } else {
@@ -78,14 +83,14 @@ function single(value, rules) {
       }
     } else if ('validator' in item) {
       // validator字段为自定义验证器，参数为字段值，返回true或者错误信息字符串
-      let customValidate = item.validator,
+      let customValidate = item.validator as CustomValidator,
         customRst = customValidate(value);
 
       if (typeof customRst == 'string' || customRst === false) {
         if (item.message) {
           errorMsg = item.message;
         } else {
-          errorMsg = customRst;
+          errorMsg = String(customRst);
         }
 
         rst = errorMsg;
@@ -97,14 +102,13 @@ function single(value, rules) {
   return rst;
 }
 
-function match(value: string, rule: RegExp | string) {
+function match(value: string, rule: RegExp | string): string | true {
   let pattern: RegExp | null = null,
     errorMsg: string = '验证未通过';
 
   if (rule instanceof RegExp) {
     pattern = rule;
   } else if (typeof rule == 'string') {
-    // TODO
     let item = preset[rule];
     if (!item) {
       throw `没有找到预置验证规则"${rule}"`;

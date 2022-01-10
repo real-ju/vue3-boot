@@ -1,5 +1,8 @@
 import CryptoJS from 'crypto-js';
 import JSEncrypt from 'jsencrypt';
+/**
+ * 请自行安装CryptoJS类型定义文件
+ */
 
 const AES_KEY: string = 'abcdef0123456789';
 
