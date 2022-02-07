@@ -37,8 +37,12 @@ export class Requester {
     this.axiosInstance.interceptors.request.use(
       // @ts-ignore
       (config: ExpandRequestConfig) => {
-        if (config.requestOptions.auth && config.headers) {
-          config.headers['Token'] = 'xxx';
+        if (
+          config.requestOptions.auth &&
+          store.getters['auth/isLogin'] &&
+          config.headers
+        ) {
+          config.headers['Token'] = store.getters['auth/token'];
         }
 
         return config;
