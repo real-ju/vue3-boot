@@ -5,7 +5,7 @@ import routes from './routes';
 import { setupRouterGuard } from './guard';
 
 // router instance
-const router = createRouter({
+export const router = createRouter({
   history: createWebHashHistory(import.meta.env.VITE_PUBLIC_PATH),
   routes,
   scrollBehavior(to, from, savedPosition) {

@@ -37,11 +37,11 @@ export const store = createStore<RootState>({
   plugins: [persistedState]
 });
 
-export function setupStore(app: App) {
-  app.use(store);
-}
-
 export const key: InjectionKey<Store<RootState>> = Symbol();
+
+export function setupStore(app: App) {
+  app.use(store, key);
+}
 
 export function useStore() {
   return baseUseStore(key);

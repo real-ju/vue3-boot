@@ -22,10 +22,12 @@ const auth: Module<AuthState, RootState> = {
   mutations: {
     login(state, payload) {
       state.user = payload.user;
+      state.token = payload.token;
       state.isLogin = true;
     },
     logout(state, payload) {
       state.user = null;
+      state.token = '';
       state.isLogin = false;
     }
   },
