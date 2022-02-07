@@ -1,4 +1,6 @@
-import type { AxiosRequestConfig, Method } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
+
+import { RequestMethodEnum } from '/@/enums/httpEnum';
 
 export interface RequestOptions {
   auth?: boolean;
@@ -14,6 +16,6 @@ export interface PartialExpandRequestConfig extends AxiosRequestConfig {
 
 export interface RequestParams {
   url: string;
-  method: Method;
+  method: RequestMethodEnum;
   data?: any;
 }

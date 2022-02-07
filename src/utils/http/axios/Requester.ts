@@ -2,6 +2,7 @@ import axios from 'axios';
 import { axiosRequestConfig } from './config';
 import { store } from '/@/store';
 import { router } from '/@/router';
+import { RequestMethodEnum } from '/@/enums/httpEnum';
 
 import type { AxiosInstance } from 'axios';
 import type {
@@ -86,7 +87,7 @@ export class Requester {
     return this.request(
       {
         ...requestParams,
-        method: 'get'
+        method: RequestMethodEnum.GET
       },
       options
     );
@@ -96,7 +97,7 @@ export class Requester {
     return this.request(
       {
         ...requestParams,
-        method: 'post'
+        method: RequestMethodEnum.POST
       },
       options
     );
@@ -106,7 +107,7 @@ export class Requester {
     return this.request(
       {
         ...requestParams,
-        method: 'put'
+        method: RequestMethodEnum.PUT
       },
       options
     );
@@ -119,7 +120,7 @@ export class Requester {
     return this.request(
       {
         ...requestParams,
-        method: 'delete'
+        method: RequestMethodEnum.DELETE
       },
       options
     );
@@ -134,7 +135,7 @@ export class Requester {
         method
       };
 
-      if (method === 'get') {
+      if (method === RequestMethodEnum.GET) {
         config.params = data;
       } else {
         config.data = data;
