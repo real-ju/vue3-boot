@@ -3,7 +3,7 @@ import { axiosRequestConfig } from './config';
 import { store } from '/@/store';
 import { router } from '/@/router';
 
-import type { AxiosInstance, AxiosRequestConfig } from 'axios';
+import type { AxiosInstance } from 'axios';
 import type {
   RequestOptions,
   ExpandRequestConfig,
