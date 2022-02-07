@@ -5,7 +5,10 @@ enum Api {
 }
 
 export const getXXX = (data: any) =>
-  httpRequester.get({
-    url: Api.TEST_API,
-    data
-  });
+  httpRequester.get(
+    {
+      url: Api.TEST_API,
+      data
+    },
+    { auth: false }
+  );

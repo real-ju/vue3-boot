@@ -7,10 +7,6 @@ export interface RequestOptions {
 }
 
 export interface ExpandRequestConfig extends AxiosRequestConfig {
-  requestOptions: Required<RequestOptions>;
-}
-
-export interface PartialExpandRequestConfig extends AxiosRequestConfig {
   requestOptions?: RequestOptions;
 }
 

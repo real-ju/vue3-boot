@@ -8,7 +8,6 @@ import type { AxiosInstance } from 'axios';
 import type {
   RequestOptions,
   ExpandRequestConfig,
-  PartialExpandRequestConfig,
   RequestParams
 } from './types';
 
@@ -36,10 +35,9 @@ export class Requester {
   private setupInterceptors(): void {
     // 请求拦截器
     this.axiosInstance.interceptors.request.use(
-      // @ts-ignore
       (config: ExpandRequestConfig) => {
         if (
-          config.requestOptions.auth &&
+          config.requestOptions?.auth &&
           store.getters['auth/isLogin'] &&
           config.headers
         ) {
@@ -130,19 +128,16 @@ export class Requester {
     let { url, method, data } = requestParams;
 
     return new Promise<any>((resolve, reject) => {
-      let config: PartialExpandRequestConfig = {
+      let config: ExpandRequestConfig = {
         url,
-        method
+        method,
+        requestOptions: options
       };
 
       if (method === RequestMethodEnum.GET) {
         config.params = data;
       } else {
         config.data = data;
-      }
-
-      if (options) {
-        config.requestOptions = options;
       }
 
       this.axiosInstance
