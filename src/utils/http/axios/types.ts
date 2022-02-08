@@ -1,9 +1,10 @@
 import type { AxiosRequestConfig } from 'axios';
 
-import { RequestMethodEnum } from '/@/enums/httpEnum';
+import { ContentTypeEnum, RequestMethodEnum } from '/@/enums/httpEnum';
 
 export interface RequestOptions {
   auth?: boolean;
+  contentType?: ContentTypeEnum;
 }
 
 export interface ExpandRequestConfig extends AxiosRequestConfig {
@@ -14,4 +15,17 @@ export interface RequestParams {
   url: string;
   method: RequestMethodEnum;
   data?: any;
+}
+
+export interface UploadFileParams {
+  url: string;
+  // File parameter interface field name
+  name?: string;
+  // file name
+  file: File | Blob;
+  // file name
+  filename?: string;
+  // Other parameters
+  data?: Recordable;
+  [key: string]: any;
 }

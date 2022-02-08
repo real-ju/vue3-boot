@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { getXXX } from '/@/api/test';
+import { uploadXXX } from '/@/api/test';
 
-getXXX({ a: 1 });
+uploadXXX();
 </script>
 
 <style></style>
