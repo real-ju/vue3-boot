@@ -3,9 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { uploadXXX } from '/@/api/test';
-
-uploadXXX();
+import { ref, reactive } from 'vue';
 </script>
 
 <style></style>

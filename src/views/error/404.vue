@@ -1,27 +1,24 @@
 <template>
   <div class="container error-page">
     <div class="error-content">
-      <img src="/src/assets/images/error/404.png" />
+      <img src="/src/assets/images/error/404.png" alt="error-404" />
       <div class="error-title">404</div>
       <div class="error-desc">抱歉，你访问的页面不存在。</div>
-      <el-button class="error-btn" type="primary" @click="backHome">
-        返回首页
-      </el-button>
+      <button class="error-btn" @click="backHome">返回首页</button>
     </div>
   </div>
 </template>
 
-<script>
-// TODO Vue3写法
-export default {
-  beforeCreate() {
-    document.title = '404 Not Found';
-  },
-  methods: {
-    backHome() {
-      this.$router.replace('/');
-    }
-  }
+<script lang="ts" setup>
+import { useRouter } from 'vue-router';
+import { setDocTitle } from '/@/utils/domUtils';
+
+let router = useRouter();
+
+setDocTitle('404 Not Found');
+
+const backHome = () => {
+  router.replace('/');
 };
 </script>
 
@@ -43,7 +40,7 @@ export default {
     }
 
     .error-title {
-      font-size: 30px;
+      font-size: 32px;
       line-height: 1.8;
     }
 
@@ -52,7 +49,21 @@ export default {
     }
 
     .error-btn {
+      padding: 8px 15px;
       margin-top: 32px;
+      background-color: #1890ff;
+      color: white;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background-color 0.25s;
+
+      &:hover {
+        background-color: lighten(#1890ff, 10%);
+      }
+
+      &:active {
+        background-color: darken(#1890ff, 5%);
+      }
     }
   }
 }
