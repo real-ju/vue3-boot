@@ -9,8 +9,10 @@ const error: RouteRecordRaw[] = [
     meta: {
       title: '404 Not Found',
       public: true
+      // TODO
+      // hideTitleSuffix: true
     },
-    component: asyncViewImport('error/404.vue')
+    component: asyncViewImport('error/404/index.vue')
   }
 ];
 

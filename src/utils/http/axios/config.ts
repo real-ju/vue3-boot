@@ -5,7 +5,8 @@ import { ContentTypeEnum } from '/@/enums/httpEnum';
 export const defaultRequestOptions: Required<RequestOptions> = {
   // 请求是否需要登录鉴权
   auth: true,
-  contentType: ContentTypeEnum.JSON
+  contentType: ContentTypeEnum.JSON,
+  customToken: false
 };
 
 export const axiosRequestConfig: Omit<ExpandRequestConfig, 'requestOptions'> &

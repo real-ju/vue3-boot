@@ -5,6 +5,7 @@ import { ContentTypeEnum, RequestMethodEnum } from '/@/enums/httpEnum';
 export interface RequestOptions {
   auth?: boolean;
   contentType?: ContentTypeEnum;
+  customToken?: string | false;
 }
 
 export interface ExpandRequestConfig extends AxiosRequestConfig {

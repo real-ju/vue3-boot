@@ -42,7 +42,10 @@ export class Requester {
 
         // handle token
         if (config.requestOptions!.auth! && store.getters['auth/isLogin']) {
-          config.headers['Token'] = store.getters['auth/token'];
+          const customToken = config.requestOptions!.customToken;
+          config.headers['Token'] = customToken
+            ? customToken
+            : store.getters['auth/token'];
         }
 
         // handle ContentType
