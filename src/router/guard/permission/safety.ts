@@ -8,6 +8,7 @@ import {
 } from '/@/router/helper/routeHelper';
 import projectSetting from '/@/settings/projectSetting';
 import { store } from '/@/store';
+import { PageEnum } from '/@/enums/pageEnum';
 
 export function createSafetyPermissionGuard(router: Router) {
   let isFetchUserRoutes = false;
@@ -27,7 +28,7 @@ export function createSafetyPermissionGuard(router: Router) {
             let userPlatform = store.getters['auth/user'].platform;
             if (multiplePlatformMode && !userPlatform) {
               store.commit('auth/logout');
-              router.push('/login');
+              router.push(PageEnum.LOGIN);
               throw '登陆状态错误，请重新登陆';
             }
 
@@ -69,7 +70,7 @@ export function createSafetyPermissionGuard(router: Router) {
 
             routeList.push({
               path: '*',
-              redirect: '/404'
+              redirect: PageEnum.ERROR_404
             });
 
             routeList.forEach((record) => {
@@ -84,7 +85,7 @@ export function createSafetyPermissionGuard(router: Router) {
             let error = new Error('路由表获取失败');
             next(error);
           });
-      } else if (to.path === '/login') {
+      } else if (to.path === PageEnum.LOGIN) {
         next('/');
       } else {
         setPageTitle(to.meta.title);
@@ -96,7 +97,7 @@ export function createSafetyPermissionGuard(router: Router) {
       if (isMatched) {
         if (!to.meta.public) {
           next({
-            path: '/login',
+            path: PageEnum.LOGIN,
             query: {
               back_url: encodeURIComponent(to.fullPath)
             }
@@ -106,7 +107,7 @@ export function createSafetyPermissionGuard(router: Router) {
           next();
         }
       } else {
-        next('/login');
+        next(PageEnum.LOGIN);
       }
     }
   });

@@ -10,4 +10,14 @@ Object.keys(modules).forEach((key) => {
   routeRecordList.push(...modList);
 });
 
-export default routeRecordList;
+const rootRoute: RouteRecordRaw = {
+  path: '/',
+  name: 'root',
+  redirect: '',
+  meta: {
+    title: 'Root',
+    public: true
+  }
+};
+
+export default [rootRoute, ...routeRecordList];

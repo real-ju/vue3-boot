@@ -4,6 +4,7 @@ import { store } from '/@/store';
 import { router } from '/@/router';
 import { RequestMethodEnum, ContentTypeEnum } from '/@/enums/httpEnum';
 import qs from 'qs';
+import { PageEnum } from '/@/enums/pageEnum';
 
 import type { AxiosInstance } from 'axios';
 import type {
@@ -87,7 +88,7 @@ export class Requester {
           });
         } else if (error.response.status === 401) {
           store.commit('auth/logout');
-          router.push('/login');
+          router.push(PageEnum.LOGIN);
 
           return Promise.reject(error);
         }
