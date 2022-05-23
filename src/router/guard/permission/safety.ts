@@ -1,11 +1,11 @@
 import type { Router, RouteRecordRaw } from 'vue-router';
 
 import {
-  asyncViewImport,
   routePathToName,
   setPageTitle,
   getComponentFilePath
 } from '/@/router/helper/routeHelper';
+import { asyncViewImport } from '/@/router/helper/asyncViewImport';
 import projectSetting from '/@/settings/projectSetting';
 import { store } from '/@/store';
 import { PageEnum } from '/@/enums/pageEnum';
@@ -113,6 +113,6 @@ export function createSafetyPermissionGuard(router: Router) {
   });
 
   router.onError((error) => {
-    router.push('/403');
+    router.push(PageEnum.ERROR_403);
   });
 }

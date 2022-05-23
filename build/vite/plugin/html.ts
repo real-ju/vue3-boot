@@ -1,5 +1,6 @@
-import html from 'vite-plugin-html';
 import type { Plugin } from 'vite';
+
+import html from 'vite-plugin-html';
 
 export function configHtmlPlugin(env: ViteEnv) {
   const htmlPlugin: Plugin[] = html({

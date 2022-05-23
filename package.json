@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
+    "dev:xxx": "cross-env CLIENT=xxx npm run dev",
     "build": "npm run type:check && npm run lint && vite build",
     "build:test": "npm run type:check && npm run lint && vite build --mode test",
     "preview": "vite preview",
-    "type:check": "vue-tsc --noEmit",
+    "type:check": "vue-tsc --noEmit --skipLibCheck",
     "lint": "npm run lint:prettier && npm run lint:eslint",
     "lint:prettier": "prettier --write \"src/**/*.{js,json,ts,tsx,css,less,scss,vue,html,md}\"",
     "lint:eslint": "eslint --cache \"src/**/*.{js,ts,tsx,vue}\""
@@ -26,6 +27,7 @@
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "@typescript-eslint/parser": "^5.7.0",
     "@vitejs/plugin-vue": "^2.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.5.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

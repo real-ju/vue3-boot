@@ -7,5 +7,7 @@ export enum PageEnum {
   // 首页
   HOME = '/dashboard',
   // 404 未找到页面
-  ERROR_404 = '/404'
+  ERROR_404 = '/404',
+  // 403 未授权
+  ERROR_403 = '/403'
 }

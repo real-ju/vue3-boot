@@ -3,10 +3,11 @@ import type { App } from 'vue';
 import { createRouter, createWebHashHistory } from 'vue-router';
 import routes from './routes';
 import { setupRouterGuard } from './guard';
+import { getEnv } from '/@/utils/env';
 
 // router instance
 export const router = createRouter({
-  history: createWebHashHistory(import.meta.env.VITE_PUBLIC_PATH),
+  history: createWebHashHistory(getEnv().VITE_PUBLIC_PATH),
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) {

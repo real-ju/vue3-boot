@@ -1,4 +1,5 @@
 import type { RequestOptions, ExpandRequestConfig } from './types';
+import { getEnv } from '/@/utils/env';
 
 import { ContentTypeEnum } from '/@/enums/httpEnum';
 
@@ -11,7 +12,7 @@ export const defaultRequestOptions: Required<RequestOptions> = {
 
 export const axiosRequestConfig: Omit<ExpandRequestConfig, 'requestOptions'> &
   Required<Pick<ExpandRequestConfig, 'requestOptions'>> = {
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: getEnv().VITE_API_BASE_URL,
   timeout: 10 * 1000,
   requestOptions: defaultRequestOptions
 };

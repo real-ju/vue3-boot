@@ -19,7 +19,7 @@ export function createLocalPermissionGuard(router: Router) {
       if (requireAuth) {
         // 检测是否登录
         if (isLogin) {
-          setPageTitle(to.meta.title);
+          setPageTitle(to.meta.title, to.meta.hideTitleSuffix);
           next();
         } else {
           next({
@@ -34,7 +34,7 @@ export function createLocalPermissionGuard(router: Router) {
         if (to.path === PageEnum.LOGIN && isLogin) {
           next('/');
         } else {
-          setPageTitle(to.meta.title);
+          setPageTitle(to.meta.title, to.meta.hideTitleSuffix);
           next();
         }
       }
@@ -46,7 +46,7 @@ export function createLocalPermissionGuard(router: Router) {
       // 如果不存在/404 会导致死循环 浏览器卡死
       router.push(PageEnum.ERROR_404);
     } else if (error.name === 'PathAuthError') {
-      router.push('/403');
+      router.push(PageEnum.ERROR_403);
     }
   });
 }

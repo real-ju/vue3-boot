@@ -1,4 +1,5 @@
 import type { Plugin } from 'vite';
+
 import vue from '@vitejs/plugin-vue';
 import { configHtmlPlugin } from './html';
 

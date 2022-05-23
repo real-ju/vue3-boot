@@ -2,6 +2,7 @@ import type { UserConfig, ConfigEnv } from 'vite';
 import { loadEnv } from 'vite';
 import { resolve } from 'path';
 import { createVitePlugins } from './build/vite/plugin';
+import { wrapEnv } from './build/utils';
 
 function pathResolve(dir: string) {
   return resolve(process.cwd(), dir);
@@ -12,8 +13,10 @@ export default ({ mode }: ConfigEnv): UserConfig => {
   const root = process.cwd();
   const env = loadEnv(mode, root);
 
+  const viteEnv = wrapEnv(env);
+
   return {
-    base: env.VITE_PUBLIC_PATH,
+    base: viteEnv.VITE_PUBLIC_PATH,
     resolve: {
       alias: [
         // /@/xxxx => /src/xxxx
@@ -28,16 +31,19 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         }
       ]
     },
-    plugins: createVitePlugins(env),
+    plugins: createVitePlugins(viteEnv),
     server: {
       // host: '0.0.0.0',
       proxy: {
         '/api': {
-          target: env.VITE_DEV_SERVER_PROXY,
+          target: viteEnv.VITE_DEV_SERVER_PROXY,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, '')
         }
       }
+    },
+    define: {
+      'process.env.VITE_ENV': viteEnv
     }
   };
 };

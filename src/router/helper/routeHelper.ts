@@ -1,13 +1,6 @@
 import projectSetting from '/@/settings/projectSetting';
 import { setDocTitle } from '../../utils/domUtils';
-
-/**
- * 异步导入页面级组件
- * @param {String} url 相对于/src/views文件夹的路径
- */
-export function asyncViewImport(url: string) {
-  return () => import(/* @vite-ignore */ '/@/views/' + url);
-}
+import { getEnv } from '/@/utils/env';
 
 /**
  * 相对url转化为路由记录name
@@ -19,9 +12,9 @@ export function routePathToName(url: string) {
 /**
  * 设置页面标题
  */
-export function setPageTitle(title: string) {
-  if (projectSetting.showPageTitleSuffix) {
-    const APP_TITLE = import.meta.env.VITE_APP_TITLE;
+export function setPageTitle(title: string, hideSuffix: boolean = false) {
+  if (!hideSuffix && projectSetting.showPageTitleSuffix) {
+    const APP_TITLE = getEnv().VITE_APP_TITLE;
     title += ` - ${APP_TITLE}`;
   }
   setDocTitle(title);

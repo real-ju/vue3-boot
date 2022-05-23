@@ -1,6 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
 
-import { asyncViewImport } from '/@/router/helper/routeHelper';
+import { asyncViewImport } from '/@/router/helper/asyncViewImport';
 
 const test: RouteRecordRaw = {
   path: '/test',
