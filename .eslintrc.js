@@ -18,5 +18,17 @@ module.exports = {
     'plugin:prettier/recommended'
   ],
   plugins: ['@typescript-eslint'],
-  rules: {}
+  rules: {
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
+    'prefer-const': 'off',
+    'vue/multi-word-component-names': 'off',
+    'no-constant-condition': 'off',
+    '@typescript-eslint/no-inferrable-types': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/ban-types': 'off',
+    'no-undef': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off'
+  }
 };
