@@ -35,6 +35,16 @@ export class Requester {
     return config;
   }
 
+  private handleResponseError(response: any) {
+    const requestOptions: Required<RequestOptions> =
+      response.config.requestOptions;
+
+    // handle error tip
+    if (requestOptions.showErrorTip) {
+      requestOptions.customErrorTip(response);
+    }
+  }
+
   private setupInterceptors(): void {
     // 请求拦截器
     this.axiosInstance.interceptors.request.use(
@@ -71,13 +81,18 @@ export class Requester {
     // 响应拦截器
     this.axiosInstance.interceptors.response.use(
       (response) => {
-        return response;
+        const requestOptions: Required<RequestOptions> = (
+          response.config as any
+        ).requestOptions;
+
+        if (requestOptions.validateCustomStatus(response)) {
+          return response;
+        } else {
+          this.handleResponseError(response);
+          return Promise.reject(response);
+        }
       },
       (error) => {
-        console.log('error', error.response);
-        const requestOptions: Required<RequestOptions> =
-          error.config.requestOptions;
-
         if (error.code === 'ECONNABORTED') {
           // 请求超时 重新发起请求
           return new Promise((resolve, reject) => {
@@ -97,10 +112,7 @@ export class Requester {
             router.push(PageEnum.LOGIN);
           }
 
-          // handle error tip
-          if (requestOptions.showErrorTip) {
-            requestOptions.customErrorTip(error.response);
-          }
+          this.handleResponseError(error.response);
 
           return Promise.reject(error);
         }

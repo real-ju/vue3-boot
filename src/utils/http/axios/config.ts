@@ -13,8 +13,13 @@ export const defaultRequestOptions: Required<RequestOptions> = {
   // 显示响应中的错误信息
   showErrorTip: false,
   // 自定义错误提示UI逻辑
-  customErrorTip: function (res) {
+  customErrorTip: function (response) {
     console.warn('请使用customErrorTip参数实现错误提示UI逻辑');
+  },
+  // 根据响应数据中的“自定义状态码”判断是resolve还是reject Promise
+  // 如果validateCustomStatus返回true，则Promise将会resolved，否则是rejected
+  validateCustomStatus: function (response) {
+    return true;
   }
 };
 

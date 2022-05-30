@@ -7,7 +7,8 @@ export interface RequestOptions {
   contentType?: ContentTypeEnum;
   customToken?: string | false;
   showErrorTip?: boolean;
-  customErrorTip?: (res: any) => void;
+  customErrorTip?: (response: any) => void;
+  validateCustomStatus?: (response: any) => boolean;
 }
 
 export interface ExpandRequestConfig extends AxiosRequestConfig {
