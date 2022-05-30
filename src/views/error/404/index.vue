@@ -11,11 +11,8 @@
 
 <script lang="ts" setup>
 import { useRouter } from 'vue-router';
-import { setDocTitle } from '/@/utils/domUtils';
 
 let router = useRouter();
-
-setDocTitle('404 Not Found');
 
 const backHome = () => {
   router.replace('/');

@@ -74,8 +74,12 @@ export class Requester {
         return response;
       },
       (error) => {
-        // 请求超时 重新发起请求
+        console.log('error', error.response);
+        const requestOptions: Required<RequestOptions> =
+          error.config.requestOptions;
+
         if (error.code === 'ECONNABORTED') {
+          // 请求超时 重新发起请求
           return new Promise((resolve, reject) => {
             this.axiosInstance
               .request(error.config)
@@ -86,14 +90,20 @@ export class Requester {
                 reject(err);
               });
           });
-        } else if (error.response.status === 401) {
-          store.commit('auth/logout');
-          router.push(PageEnum.LOGIN);
+        } else if (error.response) {
+          const statusCode = error.response.status;
+          if (statusCode === 401) {
+            store.commit('auth/logout');
+            router.push(PageEnum.LOGIN);
+          }
+
+          // handle error tip
+          if (requestOptions.showErrorTip) {
+            requestOptions.customErrorTip(error.response);
+          }
 
           return Promise.reject(error);
         }
-
-        return Promise.reject(error);
       }
     );
   }

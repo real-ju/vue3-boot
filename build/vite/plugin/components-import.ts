@@ -9,6 +9,7 @@ import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
  */
 export function configComponentsImportPlugin() {
   const componentsImportPlugin: Plugin = Components({
+    dirs: [], // 默认会从/src/components目录导入组件
     resolvers: [AntDesignVueResolver()],
     dts: './types/components.d.ts'
   });
