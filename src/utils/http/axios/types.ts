@@ -25,11 +25,10 @@ export interface UploadFileParams {
   url: string;
   // File parameter interface field name
   name?: string;
-  // file name
-  file: File | Blob;
-  // file name
+  // File data
+  file: File | Blob | File[] | Blob[];
+  // File name
   filename?: string;
   // Other parameters
   data?: Recordable;
-  [key: string]: any;
 }

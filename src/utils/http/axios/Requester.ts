@@ -124,11 +124,16 @@ export class Requester {
     const formData = new FormData();
     const customFileName = params.name || 'file';
 
-    if (params.filename) {
-      formData.append(customFileName, params.file, params.filename);
-    } else {
-      formData.append(customFileName, params.file);
-    }
+    const files = ([] as Blob[]).concat(params.file);
+    const nameField =
+      files.length === 1 ? customFileName : `${customFileName}[]`;
+    files.forEach((file) => {
+      if (params.filename) {
+        formData.append(nameField, file, params.filename);
+      } else {
+        formData.append(nameField, file);
+      }
+    });
 
     if (params.data) {
       Object.keys(params.data).forEach((key) => {
@@ -223,7 +228,7 @@ export class Requester {
           resolve(res.data);
         })
         .catch((error) => {
-          reject(error.response);
+          reject(error.response || error);
         });
     });
   }
