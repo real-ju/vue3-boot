@@ -35,6 +35,15 @@ export class Requester {
     return config;
   }
 
+  private handleCustomError(response: any): void {
+    const requestOptions: Required<RequestOptions> =
+      response.config.requestOptions;
+
+    requestOptions.handleCustomError(response, {
+      showErrorTip: requestOptions.showCustomErrorTip
+    });
+  }
+
   private setupInterceptors(): void {
     // 请求拦截器
     this.axiosInstance.interceptors.request.use(
@@ -78,7 +87,7 @@ export class Requester {
         if (requestOptions.validateCustomStatus(response)) {
           return response;
         } else {
-          requestOptions.handleCustomError(response);
+          this.handleCustomError(response);
           return Promise.reject(response);
         }
       },
@@ -105,7 +114,7 @@ export class Requester {
             router.push(PageEnum.LOGIN);
           }
 
-          requestOptions.handleCustomError(error.response);
+          this.handleCustomError(error.response);
 
           return Promise.reject(error);
         }
@@ -200,13 +209,13 @@ export class Requester {
   }
 
   request(requestParams: RequestParams, options?: RequestOptions) {
-    let { url, method, data } = requestParams;
+    const { url, method, data } = requestParams;
 
     return new Promise<any>((resolve, reject) => {
-      let config: ExpandRequestConfig = {
+      const config: ExpandRequestConfig = {
         url,
         method,
-        requestOptions: options
+        requestOptions: options // axios auto deep marge
       };
 
       if (method === RequestMethodEnum.GET) {

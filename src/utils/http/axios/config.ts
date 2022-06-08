@@ -16,7 +16,9 @@ export const defaultRequestOptions: Required<RequestOptions> = {
     return true;
   },
   // 处理自定义错误 validateCustomStatus返回false时执行
-  handleCustomError: function (response) {}
+  handleCustomError: function (response) {},
+  // 显示自定义错误提示
+  showCustomErrorTip: true
 };
 
 export const axiosRequestConfig: Omit<ExpandRequestConfig, 'requestOptions'> &
