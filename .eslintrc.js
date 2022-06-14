@@ -29,6 +29,7 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/ban-types': 'off',
     'no-undef': 'off',
-    '@typescript-eslint/ban-ts-comment': 'off'
+    '@typescript-eslint/ban-ts-comment': 'off',
+    'vue/no-unused-vars': 'off'
   }
 };
