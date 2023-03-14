@@ -1,0 +1,164 @@
+pipeline {
+  agent {
+    label 'k8s-nodejs'
+  }
+  // 设置环境变量
+  environment {
+    GIT_CREDENTIAL_ID = "gogs-id"
+    GIT_REPO_URL = 'http://gitea.io.superlucy.net/demo/ue-web-html-vue-boilerplate.git'
+    DOCKER_CREDENTIAL_ID = "harbor-id"
+    DOCKER_REGISTRY = "registry.superlucy.net"
+    DOCKER_NAMESPACE = "amiintellect"
+    KUBE_CONFIG_CREDENTIAL_ID = 'kubernetes-config-io-id'
+    KUBE_ENDPOINT = 'https://kube.io.superlucy.net:6443'
+    KUBE_NAMESPACE = "common"
+  }
+  stages {
+    stage('checkout') {
+      steps {
+        checkout([$class: 'GitSCM',
+          branches: [[name: '$BRANCH_NAME']],
+          doGenerateSubmoduleConfigurations: false,
+          extensions: [
+            [$class: 'CleanBeforeCheckout'], 
+            [$class: 'CloneOption', depth: 1, noTags: false, reference: '', shallow: false, timeout: 120],
+            [$class: 'CheckoutOption', timeout: 60]
+          ],
+          submoduleCfg: [],
+          userRemoteConfigs: [[credentialsId: env.GIT_CREDENTIAL_ID, url: env.GIT_REPO_URL]]
+        ])
+
+        script {
+          // GIT_COMMIT
+          env.GIT_COMMIT_ID = sh (script: 'git rev-parse HEAD', returnStdout: true).trim()
+          echo 'git commit id: $GIT_COMMIT_ID' 
+        }
+      }
+    }
+    stage('prepare') {
+      steps {
+        script {
+          // 工作区信息    
+          echo "workspace: $WORKSPACE";
+          // 分支信息
+          echo "current branch: $BRANCH_NAME"; 
+          
+          def BUILD_VERSION = VersionNumber(
+            versionNumberString : '${BUILDS_ALL_TIME}',
+            versionPrefix: '',
+            projectStartDate : '1970-01-01',
+            worstResultForIncrement: 'SUCCESS');
+
+          // 版本信息
+          def VERSION = readFile(encoding: 'utf-8', file: 'VERSION');
+          def VERSION_CODE = VERSION.replaceAll(/\./, '')
+          echo "version: $VERSION, version code: $VERSION_CODE";
+
+          // 设置相关参数
+          def TARGET_NAME = "ue-web-html-vue-boilerplate"
+          def TARGET_VERSION = "${VERSION}.${BUILD_VERSION}"
+          
+          if (env.BRANCH_NAME == 'master') {
+            TARGET_VERSION = "${VERSION}.${BUILD_VERSION}"
+          } else if (env.BRANCH_NAME == 'develop') {
+            TARGET_VERSION = "${VERSION}.dev-${BUILD_NUMBER}"
+          } else {
+            TARGET_VERSION = "${VERSION}.build-${BUILD_VERSION}"
+          }
+
+          // 设置为环境变量
+          env.MAJOR_VERSION = VERSION
+          env.MAJOR_VERSION_CODE = VERSION_CODE
+          env.BUILD_VERSION = BUILD_VERSION
+          env.TARGET_NAME = TARGET_NAME
+          env.TARGET_VERSION = TARGET_VERSION
+          
+          // 输出基本信息
+          echo "target name: ${TARGET_NAME}, target version: ${TARGET_VERSION}";
+          // 输出版本信息
+          echo "major version: ${MAJOR_VERSION}, build version: ${BUILD_VERSION}";
+        }
+      }
+    }
+    stage('build') {
+      steps {
+        script {
+          env.REGISTRY = env.DOCKER_REGISTRY
+          env.DOCKER_APP_NAME = "ue-web-html-vue-boilerplate"
+      
+          sh label: '替换文本内容', script: '''
+          sed -i -e "s/[0-9].[0-9].[0-9]-build/${TARGET_VERSION}/g" -e "s/git-commit-id-build/${GIT_COMMIT_ID}/g" src/main.ts
+          '''
+
+          container('nodejs') {
+            sh label: '编译程序', script: '''
+            corepack enable
+            corepack prepare pnpm@7.25.0 --activate
+            pnpm config set registry https://registry.npmmirror.com
+            pnpm config set disturl https://npmmirror.com/dist
+            pnpm config set sass-binary-site https://npmmirror.com/mirrors/node-sass
+            pnpm install && pnpm run build
+            #yarn config set registry https://registry.npmmirror.com
+            #yarn config set disturl https://npmmirror.com/dist
+            #yarn config set sass-binary-site https://npmmirror.com/mirrors/node-sass
+            #yarn && yarn run build
+            '''
+          }
+          
+          withCredentials([usernamePassword(passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME', credentialsId: "harbor-id")]) {
+            sh 'echo "$DOCKER_PASSWORD" | docker login $REGISTRY -u "$DOCKER_USERNAME" --password-stdin'
+
+            sh 'docker build -t $DOCKER_NAMESPACE/$DOCKER_APP_NAME -f ./build/Dockerfile ./build/'
+        
+            if (env.BRANCH_NAME == 'develop') {
+              sh label: '设置容器镜像标签信息', script: '''
+              docker tag $DOCKER_NAMESPACE/$DOCKER_APP_NAME:latest $REGISTRY/$DOCKER_NAMESPACE/$DOCKER_APP_NAME:latest
+              docker push $REGISTRY/$DOCKER_NAMESPACE/$DOCKER_APP_NAME:latest
+              '''
+            } else if (env.BRANCH_NAME == 'main') {
+              sh '''
+              docker build -t $DOCKER_NAMESPACE/$DOCKER_NAMESPACE/$DOCKER_APP_NAME:stable -f ./build/Dockerfile ./build/
+              docker push $REGISTRY/$DOCKER_NAMESPACE/$DOCKER_APP_NAME:stable
+              '''
+            } else if (env.BRANCH_NAME == 'v1.0.x') {
+              sh label: '设置容器镜像标签信息', script: '''
+              docker tag $DOCKER_NAMESPACE/$DOCKER_APP_NAME:latest $REGISTRY/$DOCKER_NAMESPACE/$DOCKER_APP_NAME:${MAJOR_VERSION}-latest
+              docker push $REGISTRY/$DOCKER_NAMESPACE/$DOCKER_APP_NAME:${MAJOR_VERSION}-latest
+              '''
+            }
+          }
+        }
+      }
+    }
+    stage('deploy') {
+      steps {
+        script {
+          // 根据实际情况设置需要发布的分支
+          if (env.BRANCH_NAME == 'develop') {
+            // 默认开发版本
+            withKubeConfig([credentialsId: env.KUBE_CONFIG_CREDENTIAL_ID, serverUrl: env.KUBE_ENDPOINT]) {
+              sh '''
+              kubectl apply -f build/deploy.yaml
+              kubectl rollout restart deployment $DOCKER_APP_NAME-dev -n $KUBE_NAMESPACE
+              '''
+            }
+          } else if (env.BRANCH_NAME == 'v1.0.x') {
+            // 分支版本
+            sh label: '替换名称空间内容', script: '''
+            sed -i "s/name: $DOCKER_APP_NAME-dev/name: $DOCKER_APP_NAME-v${MAJOR_VERSION_CODE}/g" build/deploy.yaml
+            sed -i "s/version: dev/version: v${MAJOR_VERSION_CODE}/g" build/deploy.yaml
+            sed -i "s/$DOCKER_APP_NAME:latest/$DOCKER_APP_NAME:${MAJOR_VERSION}-latest/g" build/deploy.yaml
+            '''
+            
+            withKubeConfig([credentialsId: env.KUBE_CONFIG_CREDENTIAL_ID, serverUrl: env.KUBE_ENDPOINT]) {
+              sh '''
+              kubectl apply -f build/deploy.yaml
+              kubectl rollout restart deployment $DOCKER_APP_NAME-v${MAJOR_VERSION_CODE} -n $KUBE_NAMESPACE
+              '''
+            }
+          }
+        }
+      }
+    }
+  }
+}
