@@ -2,12 +2,7 @@
 import preset from './rules';
 import customize from './customize';
 
-import type {
-  ErrorField,
-  Rules,
-  RuleDescription,
-  CustomValidator
-} from './types';
+import type { ErrorField, Rules, RuleDescription, CustomValidator } from './types';
 
 export default {
   validate,

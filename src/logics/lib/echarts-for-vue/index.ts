@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { App } from 'vue';
 
 import { plugin } from 'echarts-for-vue';

@@ -1,28 +1,22 @@
 import axios from 'axios';
 import { axiosRequestConfig } from './config';
-import { store } from '/@/store';
+import { useUserStore } from '/@/store/modules/user';
 import { router } from '/@/router';
 import { RequestMethodEnum, ContentTypeEnum } from '/@/enums/httpEnum';
 import qs from 'qs';
 import { PageEnum } from '/@/enums/pageEnum';
 
 import type { AxiosInstance } from 'axios';
-import type {
-  RequestOptions,
-  ExpandRequestConfig,
-  RequestParams,
-  UploadFileParams
-} from './types';
+import type { RequestOptions, ExpandRequestConfig, RequestParams, UploadFileParams } from './types';
+
+const userStore = useUserStore();
 
 export class Requester {
   private axiosRequestConfig: ExpandRequestConfig; // 实例请求配置
   private axiosInstance: AxiosInstance;
 
   constructor(options: RequestOptions = {}) {
-    this.axiosRequestConfig = this.computeAxiosRequestConfig(
-      axiosRequestConfig,
-      options
-    );
+    this.axiosRequestConfig = this.computeAxiosRequestConfig(axiosRequestConfig, options);
     this.axiosInstance = axios.create(this.axiosRequestConfig);
     this.setupInterceptors();
   }
@@ -31,13 +25,12 @@ export class Requester {
     config: ExpandRequestConfig,
     options: RequestOptions
   ): ExpandRequestConfig {
-    Object.assign(config.requestOptions, options);
+    Object.assign(config.requestOptions!, options);
     return config;
   }
 
   private handleCustomError(response: any): void {
-    const requestOptions: Required<RequestOptions> =
-      response.config.requestOptions;
+    const requestOptions: Required<RequestOptions> = response.config.requestOptions;
 
     requestOptions.handleCustomError(response, {
       showErrorTip: requestOptions.showCustomErrorTip
@@ -47,20 +40,18 @@ export class Requester {
   private setupInterceptors(): void {
     // 请求拦截器
     this.axiosInstance.interceptors.request.use(
+      // @ts-ignore
       (config: ExpandRequestConfig) => {
         config.headers = config.headers || {};
 
         // handle token
-        if (config.requestOptions!.auth! && store.getters['auth/isLogin']) {
+        if (config.requestOptions!.auth! && userStore.isLogin) {
           const customToken = config.requestOptions!.customToken;
-          config.headers['Token'] = customToken
-            ? customToken
-            : store.getters['auth/token'];
+          config.headers['Token'] = customToken ? customToken : userStore.getToken;
         }
 
         // handle ContentType
-        const contentType = (config.headers['Content-Type'] =
-          config.requestOptions!.contentType!);
+        const contentType = (config.headers['Content-Type'] = config.requestOptions!.contentType!);
 
         if (
           contentType === ContentTypeEnum.FORM_URLENCODED &&
@@ -80,9 +71,7 @@ export class Requester {
     // 响应拦截器
     this.axiosInstance.interceptors.response.use(
       (response) => {
-        const requestOptions: Required<RequestOptions> = (
-          response.config as any
-        ).requestOptions;
+        const requestOptions: Required<RequestOptions> = (response.config as any).requestOptions;
 
         if (requestOptions.validateCustomStatus(response)) {
           return response;
@@ -92,8 +81,7 @@ export class Requester {
         }
       },
       (error) => {
-        const requestOptions: Required<RequestOptions> =
-          error.response.config.requestOptions;
+        const requestOptions: Required<RequestOptions> = error.response.config.requestOptions;
 
         if (error.code === 'ECONNABORTED') {
           // 请求超时 重新发起请求
@@ -110,7 +98,7 @@ export class Requester {
         } else if (error.response) {
           const statusCode = error.response.status;
           if (statusCode === 401) {
-            store.commit('auth/logout');
+            userStore.logout();
             router.push(PageEnum.LOGIN);
           }
 
@@ -127,8 +115,7 @@ export class Requester {
     const customFileName = params.name || 'file';
 
     const files = ([] as Blob[]).concat(params.file);
-    const nameField =
-      files.length === 1 ? customFileName : `${customFileName}[]`;
+    const nameField = files.length === 1 ? customFileName : `${customFileName}[]`;
     files.forEach((file) => {
       if (params.filename) {
         formData.append(nameField, file, params.filename);
@@ -195,10 +182,7 @@ export class Requester {
     );
   }
 
-  delete(
-    requestParams: Omit<RequestParams, 'method'>,
-    options?: RequestOptions
-  ) {
+  delete(requestParams: Omit<RequestParams, 'method'>, options?: RequestOptions) {
     return this.request(
       {
         ...requestParams,
