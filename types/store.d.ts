@@ -1,11 +1,8 @@
-/* root */
-export interface RootState {}
-
-/* auth module */
-export interface AuthState {
+/* user module */
+export interface UserState {
   isLogin: boolean;
-  user: UserInfo | null;
-  token: string | null;
+  user: Nullable<UserInfo>;
+  token: Nullable<string>;
 }
 
 interface UserInfo {

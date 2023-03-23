@@ -1,20 +1,17 @@
 import type { Router, RouteRecordRaw } from 'vue-router';
 
-import {
-  routePathToName,
-  setPageTitle,
-  getComponentFilePath
-} from '/@/router/helper/routeHelper';
+import { routePathToName, setPageTitle, getComponentFilePath } from '/@/router/helper/routeHelper';
 import { asyncViewImport } from '/@/router/helper/asyncViewImport';
 import projectSetting from '/@/settings/projectSetting';
-import { store } from '/@/store';
+import { useUserStore } from '/@/store/modules/user';
 import { PageEnum } from '/@/enums/pageEnum';
 
 export function createSafetyPermissionGuard(router: Router) {
   let isFetchUserRoutes = false;
 
   router.beforeEach((to, from, next) => {
-    let isLogin = store.getters['auth/isLogin'];
+    const userStore = useUserStore();
+    let isLogin = userStore.isLogin;
     if (isLogin) {
       if (!isFetchUserRoutes) {
         // 此处为获取用户路由表的接口
@@ -25,9 +22,9 @@ export function createSafetyPermissionGuard(router: Router) {
             let adminRoutes: RouteRecordRaw[] = [];
 
             let { multiplePlatformMode } = projectSetting;
-            let userPlatform = store.getters['auth/user'].platform;
+            let userPlatform = userStore.getUser.platform;
             if (multiplePlatformMode && !userPlatform) {
-              store.commit('auth/logout');
+              userStore.logout();
               router.push(PageEnum.LOGIN);
               throw '登陆状态错误，请重新登陆';
             }
@@ -46,7 +43,7 @@ export function createSafetyPermissionGuard(router: Router) {
                     item.url,
                     multiplePlatformMode,
                     item.common,
-                    userPlatform.symbol
+                    userPlatform!.symbol
                   )
                 )
               });

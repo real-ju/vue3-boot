@@ -1,7 +1,7 @@
 import type { Router } from 'vue-router';
 
 import { setPageTitle } from '/@/router/helper/routeHelper';
-import { store } from '/@/store';
+import { useUserStore } from '/@/store/modules/user';
 import { PageEnum } from '/@/enums/pageEnum';
 
 export function createLocalPermissionGuard(router: Router) {
@@ -13,7 +13,8 @@ export function createLocalPermissionGuard(router: Router) {
       error.name = 'PathMatchError';
       next(error);
     } else {
-      let isLogin = store.getters['auth/isLogin'];
+      const userStore = useUserStore();
+      let isLogin = userStore.isLogin;
       // 检测路由访问权限
       let requireAuth = to.matched.some((record) => !record.meta.public);
       if (requireAuth) {

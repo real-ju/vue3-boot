@@ -1,19 +1,19 @@
 import '/@/design/index.scss';
 
+import 'virtual:svg-icons-register';
+
 import { createApp } from 'vue';
 import App from './App.vue';
-// import { setupStore } from '/@/store';
-import { setupRouter } from '/@/router';
+import { setupStore } from '/@/store';
+// import { setupRouter } from '/@/router';
 import { registerGlobComp } from '/@/components/registerGlobComp';
 import { setupGlobDirectives } from '/@/directives';
 import { setupLibrary } from '/@/logics/setupLibrary';
 
-import 'virtual:svg-icons-register';
-
 function bootstrap() {
   const app = createApp(App);
 
-  // setupStore(app);
+  setupStore(app);
 
   // setupRouter(app);
 
