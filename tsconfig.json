@@ -12,12 +12,13 @@
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
     "noEmit": true,
+    "allowJs": true,
     "baseUrl": ".",
     "paths": {
       "/@/*": ["src/*"],
       "/#/*": ["types/*"]
     },
-    "types": ["vite/client"]
+    "types": ["vite/client", "vite-plugin-svg-icons/client"]
   },
   "include": [
     "src/**/*.ts",
@@ -28,6 +29,7 @@
     "types/**/*.ts",
     "build/**/*.ts",
     "build/**/*.d.ts",
-    "vite.config.ts"
+    "vite.config.ts",
+    "src/store/index.ts.1"
   ]
 }

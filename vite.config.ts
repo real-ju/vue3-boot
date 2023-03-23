@@ -1,12 +1,12 @@
 import type { UserConfig, ConfigEnv } from 'vite';
 import { loadEnv } from 'vite';
-import { resolve } from 'path';
+// import { resolve } from 'path';
 import { createVitePlugins } from './build/vite/plugin';
-import { wrapEnv } from './build/utils';
+import { wrapEnv, pathResolve } from './build/utils';
 
-function pathResolve(dir: string) {
-  return resolve(process.cwd(), dir);
-}
+// function pathResolve(dir: string) {
+//   return resolve(process.cwd(), dir);
+// }
 
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv): UserConfig => {
@@ -33,7 +33,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     },
     plugins: createVitePlugins(viteEnv),
     server: {
-      // host: '0.0.0.0',
+      host: true,
       proxy: {
         '/api': {
           target: viteEnv.VITE_DEV_SERVER_PROXY,
@@ -44,6 +44,9 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     },
     define: {
       'process.env.VITE_ENV': viteEnv
+    },
+    build: {
+      sourcemap: mode === 'development'
     }
   };
 };

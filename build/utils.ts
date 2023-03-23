@@ -1,4 +1,5 @@
 import { ENVS_BY_CLIENT } from './constant';
+import { resolve } from 'path';
 
 export function wrapEnv(env: ViteEnv) {
   const CLIENT = process.env.CLIENT;
@@ -18,4 +19,8 @@ export function wrapEnv(env: ViteEnv) {
   });
 
   return env;
+}
+
+export function pathResolve(dir: string) {
+  return resolve(process.cwd(), dir);
 }
