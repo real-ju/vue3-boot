@@ -1,7 +1,7 @@
 import { ENVS_BY_CLIENT } from './constant';
 import { resolve } from 'path';
 
-export function wrapEnv( env: ViteEnv ) {
+export function wrapEnv(env: ViteEnv) {
   const CLIENT = process.env.CLIENT;
   if (!CLIENT) {
     return env;
