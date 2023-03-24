@@ -1,11 +1,11 @@
-import '/@/design/index.scss';
+import '/@/design/index.less';
 
 import 'virtual:svg-icons-register';
 
 import { createApp } from 'vue';
 import App from './App.vue';
 import { setupStore } from '/@/store';
-// import { setupRouter } from '/@/router';
+import { setupRouter } from '/@/router';
 import { registerGlobComp } from '/@/components/registerGlobComp';
 import { setupGlobDirectives } from '/@/directives';
 import { setupLibrary } from '/@/logics/setupLibrary';
@@ -15,7 +15,7 @@ function bootstrap() {
 
   setupStore(app);
 
-  // setupRouter(app);
+  setupRouter(app);
 
   registerGlobComp(app);
 
