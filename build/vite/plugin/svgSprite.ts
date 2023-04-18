@@ -11,7 +11,7 @@ export function configSvgIconsPlugin() {
   const svgIconsPlugin: Plugin = createSvgIconsPlugin({
     iconDirs: [pathResolve('src/assets/icons')],
     svgoOptions: process.env.NODE_ENV === 'production',
-    symbolId: 'icon-[dir]-[name]'
+    symbolId: '[dir]-[name]'
   });
   return svgIconsPlugin;
 }

@@ -1,13 +1,19 @@
 /**
  * 基础页面路由
  */
-export enum PageEnum {
+export enum BasicPageEnum {
   // 登录
   LOGIN = '/login',
   // 首页
-  HOME = '/dashboard',
+  HOME = '/dashboard'
+}
+
+/**
+ * 错误页面路由
+ */
+export enum ExceptionPageEnum {
   // 404 未找到页面
-  ERROR_404 = '/404',
+  EXCEPTION_404 = '/404',
   // 403 未授权
-  ERROR_403 = '/403'
+  EXCEPTION_403 = '/403'
 }

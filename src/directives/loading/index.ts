@@ -1,19 +1,15 @@
-import type { App, Directive } from 'vue';
+import type { App, Directive, DirectiveBinding } from 'vue';
 
 import loadingImg from './assets/loading.gif';
 
-const loadingDirective: Directive = function (el, binding) {
-  if (typeof binding.value != 'boolean') {
-    throw 'v-loading指令参数类型为Boolean';
-  }
-
-  if (binding.value != binding.oldValue) {
-    let style = window.getComputedStyle(el);
+const loadingDirective: Directive = function (el: HTMLElement, binding: DirectiveBinding<boolean>) {
+  if (binding.value !== binding.oldValue) {
+    const style = window.getComputedStyle(el);
     if (style.position == 'static') {
       el.style.position = 'relative';
     }
     if (binding.value) {
-      let maskEl = document.createElement('div');
+      const maskEl = document.createElement('div');
       maskEl.className = 'v-loading-dom';
       maskEl.style.width = '100%';
       maskEl.style.height = '100%';
@@ -27,13 +23,13 @@ const loadingDirective: Directive = function (el, binding) {
       maskEl.style.overflow = 'hidden';
       maskEl.style.zIndex = '999';
 
-      let imgEl = document.createElement('img');
+      const imgEl = document.createElement('img');
       imgEl.src = loadingImg;
 
       maskEl.appendChild(imgEl);
       el.appendChild(maskEl);
     } else {
-      let baseEl = el.querySelector('.v-loading-dom');
+      const baseEl = el.querySelector('.v-loading-dom');
       if (baseEl) {
         el.removeChild(baseEl);
       }

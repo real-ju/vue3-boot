@@ -2,7 +2,7 @@ import type { Router } from 'vue-router';
 
 import { setPageTitle } from '/@/router/helper/routeHelper';
 import { useUserStore } from '/@/store/modules/user';
-import { PageEnum } from '/@/enums/pageEnum';
+import { BasicPageEnum, ExceptionPageEnum } from '/@/enums/pageEnum';
 
 export function createLocalPermissionGuard(router: Router) {
   router.beforeEach((to, from, next) => {
@@ -24,7 +24,7 @@ export function createLocalPermissionGuard(router: Router) {
           next();
         } else {
           next({
-            path: PageEnum.LOGIN,
+            path: BasicPageEnum.LOGIN,
             query: {
               back_url: from.name === null ? to.fullPath : from.fullPath
             }
@@ -32,7 +32,7 @@ export function createLocalPermissionGuard(router: Router) {
         }
       } else {
         // 登录后再次访问登录页
-        if (to.path === PageEnum.LOGIN && isLogin) {
+        if (to.path === BasicPageEnum.LOGIN && isLogin) {
           next('/');
         } else {
           setPageTitle(to.meta.title, to.meta.hideTitleSuffix);
@@ -45,9 +45,9 @@ export function createLocalPermissionGuard(router: Router) {
   router.onError((error) => {
     if (error.name === 'PathMatchError') {
       // 如果不存在/404 会导致死循环 浏览器卡死
-      router.push(PageEnum.ERROR_404);
+      router.push(ExceptionPageEnum.EXCEPTION_404);
     } else if (error.name === 'PathAuthError') {
-      router.push(PageEnum.ERROR_403);
+      router.push(ExceptionPageEnum.EXCEPTION_403);
     }
   });
 }

@@ -1,7 +1,7 @@
 import type { App } from 'vue';
 
-import { setupWebStorage } from './lib/vue-web-storage';
+// import { setupEcharts } from './lib/echarts-for-vue';
 
 export function setupLibrary(app: App) {
-  setupWebStorage(app);
+  // setupEcharts(app);
 }

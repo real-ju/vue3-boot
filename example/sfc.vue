@@ -1,5 +1,5 @@
 <template></template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts" name="xxx"></script>
 
-<style lang="scss" scoped></style>
+<style lang="less" scoped></style>

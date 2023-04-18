@@ -1,37 +1,27 @@
-import type { App, Directive } from 'vue';
+import type { App, Directive, DirectiveBinding } from 'vue';
 
-const permissionDirective: Directive = function (el, binding) {
-  if (binding.value != binding.oldValue) {
-    let pers: string[] = [];
-    let hasPer = true;
+// import { checkPermission } from '/@/logics/helper/permission';
 
+const permissionDirective: Directive = function (
+  el: HTMLElement,
+  binding: DirectiveBinding<string | string[]>
+) {
+  if (binding.value !== binding.oldValue) {
     // 判断是否有权限
-    let value = binding.value;
-    if (typeof value === 'string') {
-      hasPer = pers.indexOf(value) === -1 ? false : true;
-    } else if (Array.isArray(value)) {
-      for (let index = 0; index < value.length; index++) {
-        const item = value[index];
-        if (pers.indexOf(item) == -1) {
-          hasPer = false;
-          break;
-        }
-      }
-    } else {
-      throw 'v-per指令参数类型错误';
-    }
+    // const hasPermission = checkPermission(binding.value);
+    const hasPermission = true;
 
     // 没有权限的操作
-    if (!hasPer) {
-      let arg = binding.arg || 'hide';
+    if (!hasPermission) {
+      const arg = binding.arg || 'hide';
       if (arg === 'hide') {
         el.style.display = 'none';
         el.innerHTML = '';
       } else if (arg === 'blur') {
         el.style.visibility = 'hidden';
         setTimeout(() => {
-          let elWidth = el.clientWidth;
-          let elHeight = el.clientHeight;
+          const elWidth = el.clientWidth;
+          const elHeight = el.clientHeight;
           el.style.display = 'none';
           el.style.visibility = 'visible';
           el.style.width = elWidth + 'px';

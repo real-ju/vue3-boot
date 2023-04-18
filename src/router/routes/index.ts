@@ -1,6 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
 
-import { PageEnum } from '/@/enums/pageEnum';
+import { BasicPageEnum } from '/@/enums/pageEnum';
 
 const modules = import.meta.glob('./modules/**/*.ts', { eager: true });
 
@@ -16,7 +16,7 @@ Object.keys(modules).forEach((key) => {
 const rootRoute: RouteRecordRaw = {
   path: '/',
   name: 'root',
-  redirect: PageEnum.HOME,
+  redirect: BasicPageEnum.HOME,
   meta: {
     title: 'Root',
     public: true

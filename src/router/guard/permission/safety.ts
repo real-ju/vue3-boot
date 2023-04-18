@@ -4,12 +4,22 @@ import { routePathToName, setPageTitle, getComponentFilePath } from '/@/router/h
 import { asyncViewImport } from '/@/router/helper/asyncViewImport';
 import projectSetting from '/@/settings/projectSetting';
 import { useUserStore } from '/@/store/modules/user';
-import { PageEnum } from '/@/enums/pageEnum';
+import { BasicPageEnum, ExceptionPageEnum } from '/@/enums/pageEnum';
+
+const routeWhiteList: (ExceptionPageEnum | string)[] = [
+  ExceptionPageEnum.EXCEPTION_403,
+  ExceptionPageEnum.EXCEPTION_404
+];
 
 export function createSafetyPermissionGuard(router: Router) {
   let isFetchUserRoutes = false;
 
   router.beforeEach((to, from, next) => {
+    if (routeWhiteList.indexOf(to.path) !== -1) {
+      next();
+      return;
+    }
+
     const userStore = useUserStore();
     let isLogin = userStore.isLogin;
     if (isLogin) {
@@ -25,7 +35,7 @@ export function createSafetyPermissionGuard(router: Router) {
             let userPlatform = userStore.getUser.platform;
             if (multiplePlatformMode && !userPlatform) {
               userStore.logout();
-              router.push(PageEnum.LOGIN);
+              router.push(BasicPageEnum.LOGIN);
               throw '登陆状态错误，请重新登陆';
             }
 
@@ -67,7 +77,7 @@ export function createSafetyPermissionGuard(router: Router) {
 
             routeList.push({
               path: '*',
-              redirect: PageEnum.ERROR_404
+              redirect: ExceptionPageEnum.EXCEPTION_404
             });
 
             routeList.forEach((record) => {
@@ -82,7 +92,7 @@ export function createSafetyPermissionGuard(router: Router) {
             let error = new Error('路由表获取失败');
             next(error);
           });
-      } else if (to.path === PageEnum.LOGIN) {
+      } else if (to.path === BasicPageEnum.LOGIN) {
         next('/');
       } else {
         setPageTitle(to.meta.title);
@@ -94,7 +104,7 @@ export function createSafetyPermissionGuard(router: Router) {
       if (isMatched) {
         if (!to.meta.public) {
           next({
-            path: PageEnum.LOGIN,
+            path: BasicPageEnum.LOGIN,
             query: {
               back_url: encodeURIComponent(to.fullPath)
             }
@@ -104,12 +114,12 @@ export function createSafetyPermissionGuard(router: Router) {
           next();
         }
       } else {
-        next(PageEnum.LOGIN);
+        next(BasicPageEnum.LOGIN);
       }
     }
   });
 
   router.onError((error) => {
-    router.push(PageEnum.ERROR_403);
+    router.push(ExceptionPageEnum.EXCEPTION_403);
   });
 }
