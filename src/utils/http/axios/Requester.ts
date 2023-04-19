@@ -4,15 +4,19 @@ import { useUserStore } from '/@/store/modules/user';
 import { router } from '/@/router';
 import { RequestMethodEnum, ContentTypeEnum } from '/@/enums/httpEnum';
 import qs from 'qs';
-import { PageEnum } from '/@/enums/pageEnum';
+import { BasicPageEnum } from '/@/enums/pageEnum';
 
 import type { AxiosInstance } from 'axios';
-import type { RequestOptions, ExpandRequestConfig, RequestParams, UploadFileParams } from './types';
-
-const userStore = useUserStore();
+import type {
+  RequestOptions,
+  ExpandRequestConfig,
+  FullExpandRequestConfig,
+  RequestParams,
+  UploadFileParams
+} from './types';
 
 export class Requester {
-  private axiosRequestConfig: ExpandRequestConfig; // 实例请求配置
+  private axiosRequestConfig: FullExpandRequestConfig; // 实例请求配置
   private axiosInstance: AxiosInstance;
 
   constructor(options: RequestOptions = {}) {
@@ -22,36 +26,43 @@ export class Requester {
   }
 
   private computeAxiosRequestConfig(
-    config: ExpandRequestConfig,
+    config: FullExpandRequestConfig,
     options: RequestOptions
-  ): ExpandRequestConfig {
+  ): FullExpandRequestConfig {
     Object.assign(config.requestOptions!, options);
     return config;
   }
 
   private handleCustomError(response: any): void {
     const requestOptions: Required<RequestOptions> = response.config.requestOptions;
+    const handleCustomError = requestOptions.handleCustomError;
 
-    requestOptions.handleCustomError(response, {
-      showErrorTip: requestOptions.showCustomErrorTip
-    });
+    handleCustomError &&
+      handleCustomError(response, {
+        showErrorTip: requestOptions.showCustomErrorTip
+      });
   }
 
   private setupInterceptors(): void {
     // 请求拦截器
     this.axiosInstance.interceptors.request.use(
       // @ts-ignore
-      (config: ExpandRequestConfig) => {
+      (config: FullExpandRequestConfig) => {
         config.headers = config.headers || {};
 
+        const requestOptions = config.requestOptions;
+
         // handle token
-        if (config.requestOptions!.auth! && userStore.isLogin) {
-          const customToken = config.requestOptions!.customToken;
-          config.headers['Token'] = customToken ? customToken : userStore.getToken;
+        const userStore = useUserStore();
+        const customToken = requestOptions.customToken;
+        if (requestOptions.auth && (userStore.isLogin || customToken)) {
+          config.headers[requestOptions.authHeader] = customToken
+            ? customToken
+            : userStore.getToken;
         }
 
         // handle ContentType
-        const contentType = (config.headers['Content-Type'] = config.requestOptions!.contentType!);
+        const contentType = (config.headers['Content-Type'] = requestOptions.contentType);
 
         if (
           contentType === ContentTypeEnum.FORM_URLENCODED &&
@@ -71,7 +82,7 @@ export class Requester {
     // 响应拦截器
     this.axiosInstance.interceptors.response.use(
       (response) => {
-        const requestOptions: Required<RequestOptions> = (response.config as any).requestOptions;
+        const requestOptions = (response.config as FullExpandRequestConfig).requestOptions;
 
         if (requestOptions.validateCustomStatus(response)) {
           return response;
@@ -81,7 +92,7 @@ export class Requester {
         }
       },
       (error) => {
-        const requestOptions: Required<RequestOptions> = error.response.config.requestOptions;
+        const requestOptions = (error.response.config as FullExpandRequestConfig).requestOptions;
 
         if (error.code === 'ECONNABORTED') {
           // 请求超时 重新发起请求
@@ -98,12 +109,12 @@ export class Requester {
         } else if (error.response) {
           const statusCode = error.response.status;
           if (statusCode === 401) {
+            const userStore = useUserStore();
             userStore.logout();
-            router.push(PageEnum.LOGIN);
+            router.push(BasicPageEnum.LOGIN);
           }
 
           this.handleCustomError(error.response);
-
           return Promise.reject(error);
         }
       }

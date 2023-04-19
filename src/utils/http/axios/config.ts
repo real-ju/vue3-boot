@@ -1,4 +1,4 @@
-import type { RequestOptions, ExpandRequestConfig } from './types';
+import type { RequestOptions, FullExpandRequestConfig } from './types';
 import { getEnv } from '/@/utils/env';
 
 import { ContentTypeEnum } from '/@/enums/httpEnum';
@@ -10,6 +10,8 @@ export const defaultRequestOptions: Required<RequestOptions> = {
   contentType: ContentTypeEnum.JSON,
   // 自定义Token字符串
   customToken: false,
+  // 鉴权Header名
+  authHeader: 'Authorization',
   // 根据响应数据中的“自定义状态码”判断是resolve还是reject Promise
   // 如果validateCustomStatus返回true，则Promise将会resolved，否则是rejected
   validateCustomStatus: function (response) {
@@ -21,8 +23,7 @@ export const defaultRequestOptions: Required<RequestOptions> = {
   showCustomErrorTip: true
 };
 
-export const axiosRequestConfig: Omit<ExpandRequestConfig, 'requestOptions'> &
-  Required<Pick<ExpandRequestConfig, 'requestOptions'>> = {
+export const axiosRequestConfig: FullExpandRequestConfig = {
   baseURL: getEnv().VITE_API_BASE_URL,
   timeout: 10 * 1000,
   requestOptions: defaultRequestOptions

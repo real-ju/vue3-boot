@@ -10,5 +10,8 @@ declare module 'vue-router' {
 
     // 是否隐藏页面标题后缀
     hideTitleSuffix?: boolean;
+
+    // 路由缓存
+    keepAlive?: boolean;
   }
 }

@@ -1,32 +1,32 @@
 <template>
-  <div class="container error-page">
-    <div class="error-content">
-      <img src="/src/assets/images/error/404.png" alt="error-404" />
-      <div class="error-title">404</div>
-      <div class="error-desc">抱歉，你访问的页面不存在。</div>
-      <button class="error-btn" @click="backHome">返回首页</button>
+  <div class="container exception-page">
+    <div class="exception-content">
+      <img src="/src/assets/images/exception/404.png" alt="exception" />
+      <div class="title">404</div>
+      <div class="desc">抱歉，你访问的页面不存在。</div>
+      <button class="back-btn" @click="backHome">返回首页</button>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="VException404">
 import { useRouter } from 'vue-router';
 
-let router = useRouter();
+const router = useRouter();
 
 const backHome = () => {
   router.replace('/');
 };
 </script>
 
-<style lang="scss" scoped>
-.error-page {
+<style lang="less" scoped>
+.exception-page {
   background-color: #f0f2f5;
   display: flex;
   justify-content: center;
   align-items: center;
 
-  .error-content {
+  .exception-content {
     text-align: center;
     padding-bottom: 40px;
 
@@ -36,16 +36,16 @@ const backHome = () => {
       margin-bottom: 32px;
     }
 
-    .error-title {
+    .title {
       font-size: 32px;
       line-height: 1.8;
     }
 
-    .error-desc {
+    .desc {
       color: rgba(0, 0, 0, 0.45);
     }
 
-    .error-btn {
+    .back-btn {
       padding: 8px 15px;
       margin-top: 32px;
       background-color: #1890ff;

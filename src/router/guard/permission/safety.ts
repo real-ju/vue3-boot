@@ -1,6 +1,6 @@
 import type { Router, RouteRecordRaw } from 'vue-router';
 
-import { routePathToName, setPageTitle, getComponentFilePath } from '/@/router/helper/routeHelper';
+import { routePathToName, getComponentFilePath } from '/@/router/helper/routeHelper';
 import { asyncViewImport } from '/@/router/helper/asyncViewImport';
 import projectSetting from '/@/settings/projectSetting';
 import { useUserStore } from '/@/store/modules/user';
@@ -95,7 +95,6 @@ export function createSafetyPermissionGuard(router: Router) {
       } else if (to.path === BasicPageEnum.LOGIN) {
         next('/');
       } else {
-        setPageTitle(to.meta.title);
         next();
       }
     } else {
@@ -110,7 +109,6 @@ export function createSafetyPermissionGuard(router: Router) {
             }
           });
         } else {
-          setPageTitle(to.meta.title);
           next();
         }
       } else {

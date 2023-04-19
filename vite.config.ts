@@ -1,12 +1,7 @@
 import type { UserConfig, ConfigEnv } from 'vite';
 import { loadEnv } from 'vite';
-// import { resolve } from 'path';
 import { createVitePlugins } from './build/vite/plugin';
 import { wrapEnv, pathResolve } from './build/utils';
-
-// function pathResolve(dir: string) {
-//   return resolve(process.cwd(), dir);
-// }
 
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv): UserConfig => {
@@ -45,7 +40,15 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     define: {
       'process.env.VITE_ENV': viteEnv
     },
+    css: {
+      preprocessorOptions: {
+        less: {
+          javascriptEnabled: true
+        }
+      }
+    },
     build: {
+      // outDir: 'dist' + viteEnv.VITE_PUBLIC_PATH,
       sourcemap: mode === 'development'
     }
   };
