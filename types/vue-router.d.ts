@@ -12,6 +12,6 @@ declare module 'vue-router' {
     hideTitleSuffix?: boolean;
 
     // 路由缓存
-    keepAlive?: boolean;
+    cache?: boolean;
   }
 }
