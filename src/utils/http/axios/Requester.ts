@@ -33,7 +33,14 @@ export class Requester {
     return config;
   }
 
-  private handleCustomError(response: any): void {
+  private handleResponseError(response: any): void {
+    const code = +response.data.code;
+    if (code === 10001) {
+      const userStore = useUserStore();
+      userStore.logout();
+      router.push(BasicPageEnum.LOGIN);
+    }
+
     const requestOptions: Required<RequestOptions> = response.config.requestOptions;
     const handleCustomError = requestOptions.handleCustomError;
 
@@ -87,7 +94,7 @@ export class Requester {
         if (requestOptions.validateCustomStatus(response)) {
           return response;
         } else {
-          this.handleCustomError(response);
+          this.handleResponseError(response);
           return Promise.reject(response);
         }
       },
@@ -107,14 +114,7 @@ export class Requester {
               });
           });
         } else if (error.response) {
-          const statusCode = error.response.status;
-          if (statusCode === 401) {
-            const userStore = useUserStore();
-            userStore.logout();
-            router.push(BasicPageEnum.LOGIN);
-          }
-
-          this.handleCustomError(error.response);
+          this.handleResponseError(error.response);
           return Promise.reject(error);
         }
       }
