@@ -28,7 +28,7 @@ function validate(obj: Recordable, rules: Rules): ErrorField[] | true {
       }
 
       let rst = single(currentVal, fieldRules);
-      if (typeof rst == 'string') {
+      if (typeof rst === 'string') {
         errorFields.push({
           field: key,
           message: rst
@@ -56,7 +56,8 @@ function single(value: any, rules: RuleDescription[]): string | true {
     const item = rules[index];
 
     if ('required' in item) {
-      if (item.required && String(value) == '') {
+      const valueType = typeof value;
+      if (item.required && valueType !== 'number' && valueType !== 'boolean' && !value) {
         if (item.message) {
           errorMsg = item.message;
         }
@@ -66,7 +67,7 @@ function single(value: any, rules: RuleDescription[]): string | true {
       }
     } else if (item.rule) {
       let matchRst = match(String(value), item.rule);
-      if (typeof matchRst == 'string') {
+      if (typeof matchRst === 'string') {
         if (item.message) {
           errorMsg = item.message;
         } else {
@@ -81,7 +82,7 @@ function single(value: any, rules: RuleDescription[]): string | true {
       let customValidate = item.validator as CustomValidator,
         customRst = customValidate(value);
 
-      if (typeof customRst == 'string' || customRst === false) {
+      if (typeof customRst === 'string' || customRst === false) {
         if (item.message) {
           errorMsg = item.message;
         } else {
@@ -103,7 +104,7 @@ function match(value: string, rule: RegExp | string): string | true {
 
   if (rule instanceof RegExp) {
     pattern = rule;
-  } else if (typeof rule == 'string') {
+  } else if (typeof rule === 'string') {
     let item = preset[rule];
     if (!item) {
       throw `没有找到预置验证规则"${rule}"`;

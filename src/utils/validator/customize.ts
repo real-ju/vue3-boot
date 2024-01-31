@@ -6,7 +6,7 @@ export default {
 // 判断数组不为空
 function arrNotEmpty(value: any[]) {
   if (value instanceof Array) {
-    return value.length != 0;
+    return value.length !== 0;
   } else {
     return false;
   }
