@@ -66,10 +66,6 @@ vite + vue3 + ts 项目模板
 
 - 需要在 components/registerGlobComp 中手动注册
 
-### 关于引用 Ant Design 中的资源路径
-
-需要全部在 ant-design-vue/es 下引用 ESM，可以加快 vite 的预编译
-
 ### 图标
 
 使用 Icon 组件，有三种类型，通过 type 属性定义
