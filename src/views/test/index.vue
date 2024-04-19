@@ -2,9 +2,6 @@
   <div>TEST</div>
 </template>
 
-<script setup lang="ts">
-import { getXXX } from '/@/api/test';
-getXXX({});
-</script>
+<script setup lang="ts"></script>
 
-<style></style>
+<style lang="less" scoped></style>
