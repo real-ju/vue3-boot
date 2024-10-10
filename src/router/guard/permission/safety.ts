@@ -1,123 +1,117 @@
-import type { Router, RouteRecordRaw } from 'vue-router';
+/**
+ * copy from vue3-antd-admin
+ */
+import type { Router, RouteLocationNormalized } from 'vue-router';
 
-import { routePathToName, getComponentFilePath } from '/@/router/helper/routeHelper';
-import { asyncViewImport } from '/@/router/helper/asyncViewImport';
-import projectSetting from '/@/settings/projectSetting';
 import { useUserStore } from '/@/store/modules/user';
+import { usePermissionStoreWithOut } from '/@/store/modules/permission';
 import { BasicPageEnum, ExceptionPageEnum } from '/@/enums/pageEnum';
+import { getPermissionData } from '/@/api/auth';
+import { getMenuFirstLeafNode } from '/@/logics/helper/layout';
+import { useLayoutStore } from '/@/store/modules/layout';
+import { getEnv } from '/@/utils/env';
 
-const routeWhiteList: (ExceptionPageEnum | string)[] = [
+const { MODE } = getEnv();
+
+const permissionStore = usePermissionStoreWithOut();
+
+function checkRoutePermission(to: RouteLocationNormalized) {
+  const pers: string[] = to.meta.per
+    ? Array.isArray(to.meta.per)
+      ? to.meta.per
+      : [to.meta.per]
+    : [String(to.name)];
+  const mode = to.meta.perMode || 'and';
+  let pass = mode === 'and';
+  for (let index = 0; index < pers.length; index++) {
+    const per = pers[index];
+    if (mode === 'and' && permissionStore.allPermissions.indexOf(per) === -1) {
+      pass = false;
+      break;
+    } else if (mode === 'or' && permissionStore.allPermissions.indexOf(per) !== -1) {
+      pass = true;
+      break;
+    }
+  }
+  return pass;
+}
+
+const routeWhiteList: string[] = [
   ExceptionPageEnum.EXCEPTION_403,
-  ExceptionPageEnum.EXCEPTION_404
+  ExceptionPageEnum.EXCEPTION_404,
+  BasicPageEnum.REFRESH
 ];
 
 export function createSafetyPermissionGuard(router: Router) {
-  let isFetchUserRoutes = false;
-
   router.beforeEach((to, from, next) => {
+    const isMatched = to.matched.length !== 0;
+    if (!isMatched) {
+      next(ExceptionPageEnum.EXCEPTION_404);
+      return;
+    }
+
     if (routeWhiteList.indexOf(to.path) !== -1) {
       next();
       return;
     }
 
     const userStore = useUserStore();
-    let isLogin = userStore.isLogin;
+    const isLogin = userStore.isLogin;
     if (isLogin) {
-      if (!isFetchUserRoutes) {
-        // 此处为获取用户路由表的接口
-        Promise.resolve()
-          .then((res: any) => {
-            let datas = res.data;
-            let routeList: RouteRecordRaw[] = [];
-            let adminRoutes: RouteRecordRaw[] = [];
-
-            let { multiplePlatformMode } = projectSetting;
-            let userPlatform = userStore.getUser.platform;
-            if (multiplePlatformMode && !userPlatform) {
-              userStore.logout();
-              router.push(BasicPageEnum.LOGIN);
-              throw '登陆状态错误，请重新登陆';
+      if (!permissionStore.hasFetchedPermissionData) {
+        getPermissionData()
+          .then((res) => {
+            const success = permissionStore.generatePermissions();
+            if (success) {
+              permissionStore.hasFetchedPermissionData = true;
+              next(to);
+            } else {
+              throw new Error();
             }
-
-            // 添加所有admin route
-            datas.forEach((item: any) => {
-              adminRoutes.push({
-                path: item.route,
-                name: 'admin-' + routePathToName(item.route),
-                meta: {
-                  title: item.title,
-                  public: false
-                },
-                component: asyncViewImport(
-                  getComponentFilePath(
-                    item.url,
-                    multiplePlatformMode,
-                    item.common,
-                    userPlatform!.symbol
-                  )
-                )
-              });
-            });
-
-            routeList.push({
-              path: '/',
-              redirect: '/admin'
-            });
-
-            routeList.push({
-              path: '/admin',
-              name: 'admin',
-              meta: {
-                title: 'Layout',
-                public: false
-              },
-              component: asyncViewImport('admin/index.vue'),
-              children: adminRoutes
-            });
-
-            routeList.push({
-              path: '*',
-              redirect: ExceptionPageEnum.EXCEPTION_404
-            });
-
-            routeList.forEach((record) => {
-              router.addRoute(record);
-            });
-
-            isFetchUserRoutes = true;
-
-            next(to);
           })
-          .catch((res) => {
-            let error = new Error('路由表获取失败');
+          .catch(() => {
+            const error = new Error('获取权限失败');
             next(error);
           });
-      } else if (to.path === BasicPageEnum.LOGIN) {
-        next('/');
       } else {
-        next();
+        if (to.path === '/') {
+          const layoutStore = useLayoutStore();
+          const menuNode = getMenuFirstLeafNode(layoutStore.menuTree);
+          if (menuNode) {
+            next({
+              name: menuNode.key
+            });
+          } else {
+            next(ExceptionPageEnum.EXCEPTION_404);
+          }
+        } else if (to.path === BasicPageEnum.LOGIN) {
+          next('/');
+        } else {
+          if (checkRoutePermission(to)) {
+            next();
+          } else {
+            const error = new Error('没有访问权限');
+            next(error);
+          }
+        }
       }
     } else {
-      let isMatched = to.matched.length != 0;
-
-      if (isMatched) {
-        if (!to.meta.public) {
-          next({
-            path: BasicPageEnum.LOGIN,
-            query: {
-              back_url: encodeURIComponent(to.fullPath)
-            }
-          });
-        } else {
-          next();
-        }
+      if (!to.meta.public) {
+        next({
+          path: BasicPageEnum.LOGIN,
+          query: {
+            backUrl: encodeURIComponent(to.fullPath)
+          }
+        });
       } else {
-        next(BasicPageEnum.LOGIN);
+        next();
       }
     }
   });
 
   router.onError((error) => {
-    router.push(ExceptionPageEnum.EXCEPTION_403);
+    if (MODE === 'production') {
+      router.push(ExceptionPageEnum.EXCEPTION_403);
+    }
   });
 }

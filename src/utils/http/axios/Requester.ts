@@ -35,7 +35,7 @@ export class Requester {
 
   private handleResponseError(response: any): void {
     const code = +response.data.code;
-    if (code === 10001) {
+    if (code === 401) {
       const userStore = useUserStore();
       userStore.logout();
       router.push(BasicPageEnum.LOGIN);
@@ -65,7 +65,7 @@ export class Requester {
         if (requestOptions.auth && (userStore.isLogin || customToken)) {
           config.headers[requestOptions.authHeader] = customToken
             ? customToken
-            : userStore.getToken;
+            : 'Bearer ' + userStore.getToken;
         }
 
         // handle ContentType
@@ -223,7 +223,11 @@ export class Requester {
       this.axiosInstance
         .request(config)
         .then((res) => {
-          resolve(res.data);
+          if (!config.responseType) {
+            resolve(res.data);
+          } else {
+            resolve(res);
+          }
         })
         .catch((error) => {
           reject(error.response || error);

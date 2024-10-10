@@ -1,5 +1,5 @@
 <template>
-  <div>TEST</div>
+  <div>启动成功！</div>
 </template>
 
 <script setup lang="ts"></script>

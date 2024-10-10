@@ -7,6 +7,7 @@ import { wrapEnv, pathResolve } from './build/utils';
 export default ({ mode }: ConfigEnv): UserConfig => {
   const root = process.cwd();
   const env = loadEnv(mode, root);
+  env.MODE = mode;
 
   const viteEnv = wrapEnv(env);
 
@@ -43,7 +44,12 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     css: {
       preprocessorOptions: {
         less: {
-          javascriptEnabled: true
+          javascriptEnabled: true,
+          additionalData: (content: string, filePath: string) => {
+            let rst: string = "@import '/@/design/util.less';";
+            rst += content;
+            return rst;
+          }
         }
       }
     },
