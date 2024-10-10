@@ -30,6 +30,15 @@ vite + vue3 + ts 项目模板
 - js，ts 文件：通过 vscode 的 eslint 插件，在保存时自动 fix
 - 其他文件：保存时使用 prettier 插件格式化
 - 代码提交时会执行格式化校验
+- 关闭 TS 校验（仅特殊情况下使用）：
+
+```js
+// 使用注释
+// 下一行生效：
+// @ts-ignore
+// 整个文件生效：
+// @ts-nocheck
+```
 
 ### 环境变量
 
@@ -81,3 +90,19 @@ vite + vue3 + ts 项目模板
 - settings：运行时的参数设置
 - utils：完全通用的工具代码（可直接拖到其他项目也能使用）
 - hooks：Vue3 Hooks
+
+### GIT 提交规范
+
+参考 Angular 的提交信息规范：https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit
+
+#### type 说明
+
+- feat：新功能
+- fix：bug 修复
+- refactor：代码重构
+- perf：性能优化
+- build：架构代码
+- chore：公共代码（组件/工具库）
+- style：代码格式（不影响代码运行的变动）
+- docs：文档
+- revert：代码回退
