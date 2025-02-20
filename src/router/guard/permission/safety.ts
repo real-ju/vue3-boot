@@ -15,31 +15,36 @@ const { MODE } = getEnv();
 
 const permissionStore = usePermissionStoreWithOut();
 
+/**
+ * 检查路由权限
+ */
 function checkRoutePermission(to: RouteLocationNormalized) {
-  const pers: string[] = to.meta.per
-    ? Array.isArray(to.meta.per)
-      ? to.meta.per
-      : [to.meta.per]
-    : [String(to.name)];
-  const mode = to.meta.perMode || 'and';
-  let pass = mode === 'and';
-  for (let index = 0; index < pers.length; index++) {
-    const per = pers[index];
-    if (mode === 'and' && permissionStore.allPermissions.indexOf(per) === -1) {
-      pass = false;
-      break;
-    } else if (mode === 'or' && permissionStore.allPermissions.indexOf(per) !== -1) {
-      pass = true;
-      break;
-    }
-  }
-  return pass;
+  return true;
+  // const pers: string[] = to.meta.per
+  //   ? Array.isArray(to.meta.per)
+  //     ? to.meta.per
+  //     : [to.meta.per]
+  //   : [String(to.name)];
+  // const mode = to.meta.perMode || 'and';
+  // let pass = mode === 'and';
+  // for (let index = 0; index < pers.length; index++) {
+  //   const per = pers[index];
+  //   if (mode === 'and' && permissionStore.allPermissions.indexOf(per) === -1) {
+  //     pass = false;
+  //     break;
+  //   } else if (mode === 'or' && permissionStore.allPermissions.indexOf(per) !== -1) {
+  //     pass = true;
+  //     break;
+  //   }
+  // }
+  // return pass;
 }
 
 const routeWhiteList: string[] = [
   ExceptionPageEnum.EXCEPTION_403,
   ExceptionPageEnum.EXCEPTION_404,
-  BasicPageEnum.REFRESH
+  BasicPageEnum.REFRESH,
+  BasicPageEnum.EXAMPLE
 ];
 
 export function createSafetyPermissionGuard(router: Router) {
@@ -50,29 +55,38 @@ export function createSafetyPermissionGuard(router: Router) {
       return;
     }
 
-    if (routeWhiteList.indexOf(to.path) !== -1) {
+    const userStore = useUserStore();
+    const isLogin = userStore.isLogin;
+
+    const isWhiteRoute = (() => {
+      const route = routeWhiteList.find((item) => {
+        return to.path.indexOf(item) === 0;
+      });
+      return !!route;
+    })();
+    if (isWhiteRoute) {
       next();
       return;
     }
 
-    const userStore = useUserStore();
-    const isLogin = userStore.isLogin;
     if (isLogin) {
       if (!permissionStore.hasFetchedPermissionData) {
-        getPermissionData()
-          .then((res) => {
-            const success = permissionStore.generatePermissions();
-            if (success) {
-              permissionStore.hasFetchedPermissionData = true;
-              next(to);
-            } else {
-              throw new Error();
-            }
-          })
-          .catch(() => {
-            const error = new Error('获取权限失败');
-            next(error);
-          });
+        permissionStore.hasFetchedPermissionData = true;
+        next(to);
+        // getPermissionData()
+        //   .then((res) => {
+        //     const success = permissionStore.generatePermissions();
+        //     if (success) {
+        //       permissionStore.hasFetchedPermissionData = true;
+        //       next(to);
+        //     } else {
+        //       throw new Error();
+        //     }
+        //   })
+        //   .catch(() => {
+        //     const error = new Error('获取权限失败');
+        //     next(error);
+        //   });
       } else {
         if (to.path === '/') {
           const layoutStore = useLayoutStore();
@@ -110,7 +124,7 @@ export function createSafetyPermissionGuard(router: Router) {
   });
 
   router.onError((error) => {
-    if (MODE === 'production') {
+    if (MODE !== 'development') {
       router.push(ExceptionPageEnum.EXCEPTION_403);
     }
   });

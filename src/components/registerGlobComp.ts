@@ -1,3 +1,8 @@
 import type { App } from 'vue';
 
-export function registerGlobComp(app: App) {}
+import { SvgIcon } from './index';
+
+export function registerGlobComp(app: App) {
+  // common components register
+  app.component('SvgIcon', SvgIcon);
+}

@@ -6,7 +6,7 @@
   </router-view>
 </template>
 
-<script setup lang="ts" name="LAliveRouterView">
+<script setup lang="ts">
 import type { VNode } from 'vue';
 import type { RouteLocationNormalizedLoaded } from 'vue-router';
 

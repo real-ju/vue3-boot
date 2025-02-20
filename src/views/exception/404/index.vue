@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script lang="ts" setup name="VException404">
+<script lang="ts" setup>
 import { useRouter } from 'vue-router';
 
 const router = useRouter();

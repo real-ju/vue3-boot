@@ -8,3 +8,10 @@
   -webkit-line-clamp: @num;
   -webkit-box-orient: vertical;
 }
+
+.text-line-ellipsis(@num: 1) when (@num > 1) {
+  // 以下多行省略时需要
+  display: -webkit-box;
+  -webkit-line-clamp: @num;
+  -webkit-box-orient: vertical;
+}
