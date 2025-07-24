@@ -1,7 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router';
 
-import { asyncViewImport } from '/@/router/helper/asyncViewImport';
-
 const test: RouteRecordRaw = {
   path: '/test',
   name: 'test',
@@ -9,7 +7,7 @@ const test: RouteRecordRaw = {
     title: '测试',
     public: true
   },
-  component: asyncViewImport('test/index.vue')
+  component: () => import('../../../views/test/index.vue')
 };
 
 export default test;

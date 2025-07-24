@@ -1,5 +1,5 @@
-import { httpRequester } from '/@/utils/http/axios';
-import { ContentTypeEnum } from '/@/enums/httpEnum';
+import { httpRequester } from '/@/logics/http';
+import { ContentTypeEnum } from '/@/utils/http/enum';
 
 enum Api {
   TEST_API = '/getXXX',
