@@ -39,7 +39,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       }
     },
     define: {
-      'process.env.VITE_ENV': viteEnv
+      __VITE_ENV__: viteEnv
     },
     css: {
       preprocessorOptions: {
@@ -54,7 +54,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       }
     },
     build: {
-      // outDir: 'dist' + viteEnv.VITE_PUBLIC_PATH,
+      outDir: 'dist' + viteEnv.VITE_PUBLIC_PATH,
       sourcemap: mode === 'development'
     }
   };

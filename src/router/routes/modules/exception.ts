@@ -1,7 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router';
 
-import { asyncViewImport } from '/@/router/helper/asyncViewImport';
-
 const error: RouteRecordRaw[] = [
   {
     path: '/404',
@@ -11,7 +9,8 @@ const error: RouteRecordRaw[] = [
       public: true,
       hideTitleSuffix: true
     },
-    component: asyncViewImport('exception/404/index.vue')
+    component: () => import('../../../views/exception/index.vue'),
+    props: { code: 404 }
   }
 ];
 
